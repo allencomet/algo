@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./base/base.h"
+#include "../base/base.h"
 
 /*
  * URL encoding & decoding implement
