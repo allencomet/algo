@@ -1,0 +1,287 @@
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x43443B in os::file::read(int) at /root/algo/exe
+#3  0x43455E in os::file::getlines() at /root/algo/exe
+#4  0x4565D8 in test::ExtractContent::ExtractContent(std::string const&) at /root/algo/exe
+#5  0x45442A in test::Test_tree::run() at /root/algo/exe
+#6  0x451A5F in cctest::TestRunner::thread_fun() at /root/algo/exe
+#7  0x4477AE in boost::function0<void>::operator()() const at /root/algo/exe
+#8  0x447977 in safe::Thread::thread_fun(void*) at /root/algo/exe
+#9  0x7AA1 in ?? at /root/algo/exe
+#10  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x4343BB in os::file::read(int) at /root/algo/exe
+#3  0x4344DE in os::file::getlines() at /root/algo/exe
+#4  0x4544AE in test::Test_tree::run() at /root/algo/exe
+#5  0x4519DF in cctest::TestRunner::thread_fun() at /root/algo/exe
+#6  0x44772E in boost::function0<void>::operator()() const at /root/algo/exe
+#7  0x4478F7 in safe::Thread::thread_fun(void*) at /root/algo/exe
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x4343C4 in os::file::read(unsigned int) at /root/algo/exe
+#3  0x43462E in os::file::getlines() at /root/algo/exe
+#4  0x4545FE in test::Test_tree::run() at /root/algo/exe
+#5  0x451B2F in cctest::TestRunner::thread_fun() at /root/algo/exe
+#6  0x44787E in boost::function0<void>::operator()() const at /root/algo/exe
+#7  0x447A47 in safe::Thread::thread_fun(void*) at /root/algo/exe
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x4343C4 in std::string::size() const at /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../include/c++/4.4.7/bits/basic_string.h:629
+#3  0x43462E in os::file::getlines() at /root/algo/base/os.cc:136
+#4  0x4545FE in ExtractContent at /root/algo/test/tree.cc:13
+#5  0x451B2F in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#6  0x44787E in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x447A47 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x4343C4 in std::string::size() const at /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../include/c++/4.4.7/bits/basic_string.h:629
+#3  0x43462E in os::file::getlines() at /root/algo/base/os.cc:136
+#4  0x4545FE in ExtractContent at /root/algo/test/tree.cc:13
+#5  0x451B2F in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#6  0x44787E in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x447A47 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x4343C4 in std::string::size() const at /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../include/c++/4.4.7/bits/basic_string.h:629
+#3  0x43462E in os::file::getlines() at /root/algo/base/os.cc:136
+#4  0x4545FE in ExtractContent at /root/algo/test/tree.cc:13
+#5  0x451B2F in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#6  0x44787E in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x447A47 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x434837 in std::string::size() const at /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../include/c++/4.4.7/bits/basic_string.h:629
+#3  0x434C6E in os::file::getlines() at /root/algo/base/os.cc:136
+#4  0x4547CE in ExtractContent at /root/algo/test/tree.cc:13
+#5  0x451CFF in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#6  0x447A4E in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x447C17 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x434837 in std::string::size() const at /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../include/c++/4.4.7/bits/basic_string.h:629
+#3  0x434C6E in os::file::getlines() at /root/algo/base/os.cc:136
+#4  0x4547CE in ExtractContent at /root/algo/test/tree.cc:13
+#5  0x451CFF in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#6  0x447A4E in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x447C17 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+F0330 18:38:21 54784 test/net.cc:47] check failed: net::bind(fd, serv_addr)! 
+<aborted>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x325E5 in ?? at /root/algo/exe
+#2  0x33DC5 in ?? at /root/algo/exe
+#3  0x44ADE3 in cclog::xx::LevelLogger::push_fatal_log(cclog::xx::LevelLog*) at /root/algo/base/cclog/cclog.cc:408
+#4  0x4178EB in ~FatalLogSaver at /root/algo/util/../base/cclog/cclog.h:262
+#5  0x45A72E in test::start_tcp_server() at /root/algo/test/net.cc:48
+#6  0x447A4E in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x447C17 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x434837 in std::string::size() const at /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../include/c++/4.4.7/bits/basic_string.h:629
+#3  0x434C6E in os::file::getlines() at /root/algo/base/os.cc:136
+#4  0x4547CE in ExtractContent at /root/algo/test/tree.cc:13
+#5  0x451CFF in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#6  0x447A4E in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x447C17 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x434837 in std::string::size() const at /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../include/c++/4.4.7/bits/basic_string.h:629
+#3  0x434C6E in os::file::getlines() at /root/algo/base/os.cc:136
+#4  0x4547CE in ExtractContent at /root/algo/test/tree.cc:13
+#5  0x451CFF in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#6  0x447A4E in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x447C17 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x434837 in std::string::size() const at /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../include/c++/4.4.7/bits/basic_string.h:629
+#3  0x434C6E in os::file::getlines() at /root/algo/base/os.cc:136
+#4  0x4547CE in ExtractContent at /root/algo/test/tree.cc:13
+#5  0x451CFF in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#6  0x447A4E in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x447C17 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x434953 in std::string::size() const at /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../include/c++/4.4.7/bits/basic_string.h:629
+#3  0x4350DE in os::file::getlines() at /root/algo/base/os.cc:136
+#4  0x454C3E in ExtractContent at /root/algo/test/tree.cc:13
+#5  0x45216F in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#6  0x447EBE in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x448087 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x43494D in std::string::size() const at /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../include/c++/4.4.7/bits/basic_string.h:629
+#3  0x4350EE in os::file::getlines() at /root/algo/base/os.cc:136
+#4  0x454C4E in ExtractContent at /root/algo/test/tree.cc:13
+#5  0x45217F in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#6  0x447ECE in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x448097 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x43494D in std::string::size() const at /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../include/c++/4.4.7/bits/basic_string.h:629
+#3  0x4350EE in os::file::getlines() at /root/algo/base/os.cc:136
+#4  0x454C4E in ExtractContent at /root/algo/test/tree.cc:13
+#5  0x45217F in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#6  0x447ECE in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x448097 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x434962 in os::file::read(unsigned int) at /root/algo/base/os.cc:156
+#3  0x43510E in os::file::getlines() at /root/algo/base/os.cc:136
+#4  0x454C6E in ExtractContent at /root/algo/test/tree.cc:13
+#5  0x45219F in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#6  0x447EEE in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x4480B7 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x434968 in os::file::read(unsigned int) at /root/algo/base/os.cc:156
+#3  0x43511E in os::file::getlines() at /root/algo/base/os.cc:136
+#4  0x454C7E in ExtractContent at /root/algo/test/tree.cc:13
+#5  0x4521AF in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#6  0x447EFE in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x4480C7 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x673C4 in ?? at /root/algo/exe
+#2  0x434968 in os::file::read(unsigned int) at /root/algo/base/os.cc:156
+#3  0x43511E in os::file::getlines() at /root/algo/base/os.cc:136
+#4  0x454C7E in ExtractContent at /root/algo/test/tree.cc:13
+#5  0x4521AF in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#6  0x447EFE in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x4480C7 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+F0330 21:30:07 57093 test/net.cc:47] check failed: net::bind(fd, serv_addr)! 
+<aborted>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x325E5 in ?? at /root/algo/exe
+#2  0x33DC5 in ?? at /root/algo/exe
+#3  0x44B3F3 in cclog::xx::LevelLogger::push_fatal_log(cclog::xx::LevelLog*) at /root/algo/base/cclog/cclog.cc:408
+#4  0x4178EB in ~FatalLogSaver at /root/algo/util/../base/cclog/cclog.h:262
+#5  0x45AD3E in test::start_tcp_server() at /root/algo/test/net.cc:48
+#6  0x44805E in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x448227 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+F0330 21:30:25 57127 test/net.cc:47] check failed: net::bind(fd, serv_addr)! 
+<aborted>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x325E5 in ?? at /root/algo/exe
+#2  0x33DC5 in ?? at /root/algo/exe
+#3  0x44B3F3 in cclog::xx::LevelLogger::push_fatal_log(cclog::xx::LevelLog*) at /root/algo/base/cclog/cclog.cc:408
+#4  0x4178EB in ~FatalLogSaver at /root/algo/util/../base/cclog/cclog.h:262
+#5  0x45AD3E in test::start_tcp_server() at /root/algo/test/net.cc:48
+#6  0x44805E in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x448227 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+F0330 21:38:43 57278 test/net.cc:47] check failed: net::bind(fd, serv_addr)! 
+<aborted>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x325E5 in ?? at /root/algo/exe
+#2  0x33DC5 in ?? at /root/algo/exe
+#3  0x44B013 in cclog::xx::LevelLogger::push_fatal_log(cclog::xx::LevelLog*) at /root/algo/base/cclog/cclog.cc:408
+#4  0x41796B in ~FatalLogSaver at /root/algo/util/../base/cclog/cclog.h:262
+#5  0x45AA5E in test::start_tcp_server() at /root/algo/test/net.cc:48
+#6  0x447C7E in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x447E47 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<segmentation fault>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x9D4E8 in ?? at /root/algo/exe
+#2  0x456966 in __copy_m<std::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::basic_string<char, std::char_traits<char>, std::allocator<char> >*> at /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../include/c++/4.4.7/bits/stl_algobase.h:341
+#3  0x45461B in std::string::_M_rep() const at /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../include/c++/4.4.7/bits/basic_string.h:286
+#4  0x451C3F in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#5  0x44798E in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#6  0x447B57 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#7  0x7AA1 in ?? at /root/algo/exe
+#8  0xE8AAD in ?? at /root/algo/exe
+F0330 21:57:36 57807 test/net.cc:47] check failed: net::bind(fd, serv_addr)! 
+<aborted>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x325E5 in ?? at /root/algo/exe
+#2  0x33DC5 in ?? at /root/algo/exe
+#3  0x44AD23 in cclog::xx::LevelLogger::push_fatal_log(cclog::xx::LevelLog*) at /root/algo/base/cclog/cclog.cc:408
+#4  0x4179FB in ~FatalLogSaver at /root/algo/util/../base/cclog/cclog.h:262
+#5  0x45A8CE in test::start_tcp_server() at /root/algo/test/net.cc:48
+#6  0x44798E in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x447B57 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe
+<aborted>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x325E5 in ?? at /root/algo/exe
+#2  0x33DC5 in ?? at /root/algo/exe
+#3  0xBEA7D in ?? at /root/algo/exe
+#4  0xBCBD6 in ?? at /root/algo/exe
+#5  0xBCC03 in ?? at /root/algo/exe
+#6  0xBCD22 in ?? at /root/algo/exe
+#7  0xBD11D in ?? at /root/algo/exe
+#8  0x420B66 in __gnu_cxx::new_allocator<std::string>::allocate(unsigned long, void const*) at /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../include/c++/4.4.7/ext/new_allocator.h:89
+#9  0x456E5E in __copy_m<std::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::back_insert_iterator<std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > > at /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../include/c++/4.4.7/bits/stl_algobase.h:341
+#10  0x454A66 in ~file at /root/algo/test/../util/../base/os.h:118
+#11  0x451F3F in safe::SyncEvent::signal() at /root/algo/base/cctest/../thread_util.h:232
+#12  0x447C8E in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#13  0x447E57 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#14  0x7AA1 in ?? at /root/algo/exe
+#15  0xE8AAD in ?? at /root/algo/exe
+F0330 23:03:04 58788 test/net.cc:47] check failed: net::bind(fd, serv_addr)! 
+<aborted>
+#0  0xF7E0 in ?? at /root/algo/exe
+#1  0x325E5 in ?? at /root/algo/exe
+#2  0x33DC5 in ?? at /root/algo/exe
+#3  0x44BD83 in cclog::xx::LevelLogger::push_fatal_log(cclog::xx::LevelLog*) at /root/algo/base/cclog/cclog.cc:408
+#4  0x418B7B in ~FatalLogSaver at /root/algo/util/../base/cclog/cclog.h:262
+#5  0x45BBCE in test::start_tcp_server() at /root/algo/test/net.cc:48
+#6  0x4489EE in boost::function0<void>::operator()() const at /usr/local/include/boost/function/function_template.hpp:772
+#7  0x448BB7 in boost::function0<void>::clear() at /usr/local/include/boost/function/function_template.hpp:878
+#8  0x7AA1 in ?? at /root/algo/exe
+#9  0xE8AAD in ?? at /root/algo/exe

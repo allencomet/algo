@@ -167,7 +167,7 @@ class file {
     /*
      * read size bytes, if size == -1, read all data
      */
-    std::string read(int32 size = -1);
+    std::string read(uint32 size = -1);
 
     uint32 write(const void* s, uint32 size) {
         return ::fwrite(s, 1, size, _fd);

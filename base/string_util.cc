@@ -104,6 +104,17 @@ void split(const std::string& s, const std::string& sep,std::vector<std::string>
 	if (from < s.size()) v.push_back(s.substr(from));	
 }
 
+void split(const std::string &str, boost::function<bool(char)> fun, bool flag, std::vector<std::string> &ret) {
+	::size_t pos = 0, from = -1;
+	for (std::string::const_iterator it = str.begin(); it != str.end(); ++it, ++pos) {
+		if (flag == fun(*it)) {
+			if (pos > (from + 1)) ret.push_back(str.substr(from + 1, pos - from - 1));
+			from = pos;
+		}
+	}
+	if (pos > (from + 1)) ret.push_back(str.substr(from + 1, pos - from - 1));
+}
+
 std::string replace(const std::string& s, const std::string& sub,
                     const std::string& to, uint32 maxreplace) {
     std::string x;

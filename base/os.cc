@@ -136,7 +136,7 @@ std::vector<std::string> file::getlines() {
     return str::split(this->read(), '\n');
 }
 
-std::string file::read(int32 size) {
+std::string file::read(uint32 size) {
     if (size == -1) {
         size = (int32) this->size();
         CHECK_NE(size, -1);
@@ -144,14 +144,15 @@ std::string file::read(int32 size) {
 
     std::string s;
     s.resize(size);
+	const char *p = s.data();
 
-    size_t r = ::fread(&s[0], 1, s.size(), _fd);
-    CHECK_GE(r, 0);
+	size_t r = ::fread(&s[0], 1, s.size(), _fd);
+	CHECK_GE(r, 0);
 
-    if (r < s.size()) {
-        _eof = true;
-        s.resize(r);
-    }
+	if (r < s.size()) {
+		_eof = true;
+		s.resize(r);
+	}
 
     return s;
 }

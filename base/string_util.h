@@ -10,6 +10,8 @@
 #include <bitset>
 #include <algorithm>
 
+#include <boost/function.hpp>
+
 namespace str {
 
 /*
@@ -39,6 +41,15 @@ std::vector<std::string> split(const std::string& s, const std::string& sep,
 
 void split(const std::string& s, const std::string& sep,std::vector<std::string> &v,
 		   uint32 maxsplit=-1);
+
+/************************************************************************/
+/* 
+std::string str = ",,ab,,ak";
+std::vector<std::string> lineWords;
+split(str, isalpha, false, lineWords);//用所有非字母的字符作为分隔符
+*/
+/************************************************************************/
+void split(const std::string &str, boost::function<bool(char)> fun, bool flag, std::vector<std::string> &ret);
 
 /*
  *   replace("$@xx$@", "$@", "#");     return "#xx#"
