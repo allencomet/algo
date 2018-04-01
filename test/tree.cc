@@ -78,7 +78,7 @@ DEF_test(tree) {
 		EXPECT_EQ(tree::BinarySearchRecursive(arr, num, 11), false);
 	}
 
-	DEF_case(BST) {
+	DEF_case(BST_insert) {
 		ExtractContent ec("bible.txt");
 
 		COUT << "line: " << ec.line();
@@ -89,20 +89,68 @@ DEF_test(tree) {
 		for (std::vector<std::string>::const_iterator it = words.begin(); it != words.end(); ++it) {
 			int *ret = bst.search(*it);
 			if (NULL == ret) {
-				bst.insert(*it, 1);
-				//COUT << "insert new word: " << *it;
+				//bst.insert(*it, 1);
+				bst.insert_norecursive(*it, 1);
 			} else {
 				++(*ret);
-				//COUT << "word " << *it << " count increase";
+			}
+		}
+		EXPECT_EQ(ec.line(), 17255);
+		EXPECT_EQ(ec.numberOfWords(), 431180);
+		EXPECT_EQ(bst.size(), 10070);
+		EXPECT_EQ(*bst.search("God"), 2252);
+
+		//COUT << "BST size: " << bst.size();
+		/*int *value = bst.search("God");
+		if (NULL != value) COUT << "God: " << *value;
+		else COUT << "cannot find God";*/
+	}
+
+	DEF_case(BST_traverse) {
+		ExtractContent ec("bible.txt");
+		tree::BST<std::string, int> bst;
+		const std::vector<std::string>& words = ec.words();
+		int i = 0;
+		for (std::vector<std::string>::const_iterator it = words.begin(); it != words.end(); ++it) {
+			if (i++ < 10){
+				int *ret = bst.search(*it);
+				if (NULL == ret) {
+					//bst.insert(*it, 1);
+					bst.insert_norecursive(*it, 1);
+				} else {
+					++(*ret);
+				}
+			} else {
+				break;
 			}
 		}
 
-		COUT << "BST size: " << bst.size();
+		bst.preOrder();
+		bst.inOrder();
+		bst.postOrder();
+		bst.levelOrder();
 
-		int *value = bst.search("God");
-		if (NULL != value) COUT << "God: " << *value;
-		else COUT << "cannot find God";
+		std::pair<std::string, int> retMin = bst.minimum();
+		COUT << "minimum: key: " << retMin.first << ",value: " << retMin.second;
+		std::pair<std::string, int> retMax = bst.maximum();
+		COUT << "maximum: key: " << retMax.first << ",value: " << retMax.second;
+
+		//bst.delMinRecursive();
+		//bst.delMinRecursive();
+		bst.del("and");
+		bst.preOrder();
+		bst.del("God");
+		bst.preOrder();
+		//std::pair<std::string, int> retMin2 = bst.minimum();
+		//COUT << "minimum: key: [" << retMin2.first << "],value: [" << retMin2.second << "]";
+		
+
+		//bst.delMaxRecursive();
+		//bst.delMaxRecursive();
+		//bst.preOrder();
 	}
+
+
 }
 
 }

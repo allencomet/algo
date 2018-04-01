@@ -64,6 +64,22 @@ int main(int argc,char **argv){
     cctest::init_cctest(argc, argv);
     cctest::run_tests();
 
+	char *p = NULL;
+	char *p2 = p;
+	p2 = new char[1];
+	if (NULL == p) {
+		COUT << "p is NULL";
+	}else {
+		COUT << "p is not NULL";
+	}
+
+	if (NULL == p2) {
+		COUT << "p2 is NULL";
+	}else {
+		COUT << "p2 is not NULL";
+	}
+
+
     return 0;
 }
 
