@@ -47,8 +47,6 @@ void selection_sort(T arr[],int n){
         std::swap(arr[i],arr[min_index]);
         //8 1   ==> 1 6 2 3 8 5 7 4
         //6 2   ==> 1 2 6 3 8 5 7 4
-
-
     }
 }
 

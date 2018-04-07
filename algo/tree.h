@@ -17,11 +17,9 @@ bool BinarySearch(T arr[], int n, T target) {
 		mid = l + (r - l) / 2;//mid = (l+r)/2可能会越界
 		if (arr[mid] == target) {
 			return true;
-		}
-		else if (target < arr[mid]) {//继续在左边查找
+		}else if (target < arr[mid]) {//继续在左边查找
 			r = mid - 1;
-		}
-		else {
+		}else {
 			l = mid + 1;
 		}
 	}
