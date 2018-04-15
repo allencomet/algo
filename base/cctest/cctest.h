@@ -131,6 +131,7 @@ struct TestSaver {
 //上面的新建一个测试用例类，并将这个测试用例类加入到单例的测试器里，这样每调用一次
 //DEF_test宏，就会新建一个测试用例并添加到全局测试器里
 
+//DEF_case必须放在DEF_test里面才能正常编译
 #define DEF_case(_case_) _current_case = #_case_;
 
 inline void set_green() {
@@ -206,6 +207,7 @@ inline void reset_color() {
 }
 
 #define EXPECT_EQ(_x_, _y_) EXPECT_OP(_x_, _y_, ==, "EQ")
+#define EXPECT_NE(_x_, _y_) EXPECT_OP(_x_, _y_, !=, "NE")
 #define EXPECT_GE(_x_, _y_) EXPECT_OP(_x_, _y_, >=, "GE")
 #define EXPECT_LE(_x_, _y_) EXPECT_OP(_x_, _y_, <=, "LE")
 #define EXPECT_GT(_x_, _y_) EXPECT_OP(_x_, _y_, >, "GT")
