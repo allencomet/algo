@@ -3,6 +3,7 @@
 #include "../design/observer.h"
 #include "../design/strategy.h"
 #include "../design/factory.h"
+#include "../design/singleton.h"
 
 namespace test {
 
@@ -59,6 +60,12 @@ DEF_test(Factory) {
 	design::B2 *b2 = (design::B2 *)f2.createProductB("b2");
 	a2->perform();
 	b2->perform();
+}
+
+DEF_test(Singleton) {
+	EXPECT_EQ(design::LazySingleton::instance(), design::LazySingleton::instance());
+	EXPECT_EQ(design::SafeLazySingleton::instance(), design::SafeLazySingleton::instance());
+	EXPECT_EQ(design::StarvingSingleton::instance(), design::StarvingSingleton::instance());
 }
 
 
