@@ -1,10 +1,7 @@
 #include "exception_catch.h"
 
-<<<<<<< HEAD
 #include <unistd.h>
 
-=======
->>>>>>> 02d2e1338b4b329626334ebd31373d0c430fa1a2
 namespace exception_catch {
 	Except_frame* except_stack = new Except_frame;
 
