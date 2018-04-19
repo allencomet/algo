@@ -31,12 +31,9 @@ git remote set-url origin https://uesrename:pwd@github.com/allencomet/algo.git
 
 
 
-
-
 I got this error when I tried to clone a repo in bit bucket.
 "(gnome-ssh-askpass:11720): Gtk-WARNING **: cannot open display:"
 
 Run below command and then try again:
 Solved: unset SSH_ASKPASS
-
 
