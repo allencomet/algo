@@ -11,10 +11,10 @@ else:
 ccdefines = {'_FILE_OFFSET_BITS' : '64', 'DEBUG' : 1, }
 
 env = Environment(CC = 'gcc', 
-	LIBS = ['stdc++', 'm', 'pthread', 'dl', 'rt'], 
+	LIBS = ['stdc++', 'm', 'pthread', 'dl', 'rt', 'mongoc-1.0', 'bson-1.0'], 
 	LIBPATH = ['/usr/lib', '/usr/local/lib', './lib'], 
 	LINKFLAGS = ['-Wl,--no-as-needed','-rdynamic'],
-	CPPPATH = ['.'])
+	CPPPATH = ['.','/usr/local/include/libbson-1.0','/usr/local/include/libmongoc-1.0'])
 
 env.Append(CPPFLAGS = ccflags)
 env.Append(CPPDEFINES = ccdefines)
@@ -28,11 +28,14 @@ common_source_files = glob('util/impl/*.cc') + \
 
 algo_source_files = glob('algo/impl/*.cc')
 
+db_source_files = glob('db/mongodb/*.cc') + \
+			glob('db/redis/*.cc')
+
 test_source_files = glob('test/*.cc')
 
-algo_source_files = ['main.cc'] + common_source_files + algo_source_files + test_source_files
+exe_source_files = ['main.cc'] + common_source_files + algo_source_files + db_source_files + test_source_files
 
-env.Program('exe', algo_source_files)
+env.Program('exe', exe_source_files)
 
 
 

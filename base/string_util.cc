@@ -1072,23 +1072,27 @@ double to_double(const std::string& v) {
 
 
 //c++98 不支持列表初始化，只能采用折中的方式
-std::pair<char,int> pairArray[] =   
-{  
-	std::make_pair('k', 10),  
-	std::make_pair('m', 20),  
+#if __cplusplus >= 201103L
+
+//c++11 支持列表初始化
+static ascii_table __int_units{
+	std::map<char, int> {
+		{ 'k', 10 },{ 'm', 20 },{ 'g', 30 },{ 't', 40 },{ 'p', 50 }}
+};
+
+#else
+
+std::pair<char, int> pairArray[] =
+{
+	std::make_pair('k', 10),
+	std::make_pair('m', 20),
 	std::make_pair('g', 30),
 	std::make_pair('t', 40),
 	std::make_pair('p', 50)
-};  
-static ascii_table __int_units(std::map<char,int>(pairArray,pairArray+sizeof(pairArray)/sizeof(pairArray[0])));
+};
+static ascii_table __int_units(std::map<char, int>(pairArray, pairArray + sizeof(pairArray) / sizeof(pairArray[0])));
 
-//c++11 支持列表初始化
-//static ascii_table __int_units {
-//	std::map<char, int> {
-//		{'k', 10}, {'m', 20}, {'g', 30}, {'t', 40}, {'p', 50},
-//	}
-//};
-
+#endif
 
 
 

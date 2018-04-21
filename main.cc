@@ -61,8 +61,7 @@ DEF_test(main) {
 int main(int argc,char **argv){
     /*FLG_main = true;
 
-    cctest::init_cctest(argc, argv);
-    cctest::run_tests();
+   
 
 	char *p = NULL;
 	char *p2 = p;
@@ -82,6 +81,9 @@ int main(int argc,char **argv){
 	ccflag::init_ccflag(argc, argv);
 	cclog::init_cclog(argv[0]);
 
+	cctest::init_cctest(argc, argv);
+	cctest::run_tests();
+
 	int i = 0;
 	std::string str("hello");
 
@@ -93,10 +95,10 @@ int main(int argc,char **argv){
 
 	TLOG("hello") << "log to specific file";
 
-	for (int i = 0; i < 100000; ++i) {
-		DLOG("xxx") << "log only --dlog_on=true";
-		COUT << i;
-	}
+	//for (int i = 0; i < 100000; ++i) {
+	//	DLOG("xxx") << "log only --dlog_on=true";
+	//	COUT << i;
+	//}
 		
 
     return 0;
