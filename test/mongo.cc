@@ -4,6 +4,57 @@
 #include <bson.h>
 #include <bcon.h>
 
+/*	通过配置文件启动MongoDB
+
+mongodb的参数说明：
+
+mongodb的参数说明：
+--dbpath 数据库路径(数据文件)
+--logpath 日志文件路径
+--master 指定为主机器
+--slave 指定为从机器
+--source 指定主机器的IP地址
+--pologSize 指定日志文件大小不超过64M.因为resync是非常操作量大且耗时，最好通过设置一个足够大的oplogSize来避免resync(默认的 oplog大小是空闲磁盘大小的5%)。
+--logappend 日志文件末尾添加
+--port 启用端口号
+--fork 在后台运行
+--only 指定只复制哪一个数据库
+--slavedelay 指从复制检测的时间间隔
+--auth 是否需要验证权限登录(用户名和密码)
+--bind_ip 默认为绑定在127.0.0.1，默认只有本机可以连接，此时，需要将bind_ip配置为0.0.0.0，表示接受任何IP的连接
+
+注：mongodb配置文件里面的参数很多，不懂的请查看 --help,如果定制特定的需求，请参考官方文档
+
+
+
+1、新建自定义MongoDB相关数据存放目录
+----------------------------
+sudo mkdir -p /data/db
+sudo mkdir -p /data/db/log
+sudo touch /data/db/log/mongodb.log
+sudo touch  /etc/mongodb.conf
+
+2、编辑配置文件
+----------------------------
+vim mongodb.conf
+
+dbpath=/data/db					#指定数据库路径
+logpath=/data/log/mongodb.log	#指定log路径
+logappend=true					#在log末尾持续添加
+bind_ip=0.0.0.0					#接受任何IP的连接（注：如果未设置则只允许本地连接，无法远程连接）
+port=27017						#端口号
+fork=true						#创建子进程
+
+3、通过配置文件启动
+----------------------------
+./mongod -f /etc/mongodb.conf
+
+如果输出内容类似如下，那么就启动成功了
+about to fork child process, waiting until server is ready for connections.
+forked process: 9392
+child process started successfully, parent exiting
+*/
+
 namespace test {
 
 DEF_test(conn_mongo) {
@@ -648,5 +699,506 @@ DEF_test(exec_cmd) {
 	mongoc_cleanup();
 }
 
+
+/************************************************************************/
+/* 
+database: stumanager
+collection: baseinfo
+
+{
+"id": "0000001",
+"name": "allen",
+"gender": "boy",
+"age": 24,
+"subject": [{
+		"name": "math",
+		"score": 95.00
+	}, {
+		"name": "english",
+		"score": 97.00
+	}, {
+		"name": "chinese",
+		"score": 88.50
+	}]
+}
+
+{
+"id": "0000002",
+"name": "comet",
+"gender": "boy",
+"age": 20,
+"subject": [{
+		"name": "math",
+		"score": 70.00
+	}, {
+		"name": "english",
+		"score": 59.00
+	}, {
+		"name": "chinese",
+		"score": 68.50
+	}]
+}
+
+{
+"id": "0000003",
+"name": "ciel",
+"gender": "girl",
+"age": 22,
+"subject": [{
+		"name": "math",
+		"score": 70.00
+	}, {
+		"name": "english",
+		"score": 59.00
+	}, {
+		"name": "chinese",
+		"score": 68.50
+	}]
+}
+
+{
+"id": "0000004",
+"name": "carol",
+"gender": "girl",
+"age": 23,
+"subject": [{
+		"name": "math",
+		"score": 70.00
+	}, {
+		"name": "english",
+		"score": 59.00
+	}, {
+		"name": "chinese",
+		"score": 68.50
+	}]
+}
+
+(1)查询所有男孩的信息
+
+(2)查询所有女孩的信息
+
+(3)查询数学90分以上的人数
+
+(4)查询英语90分以上的女生人数
+
+(5)查询数学90分以上或英语90分以上的人数
+
+(6)查询数学90分以上或英语90分以上的同学总分
+
+(7)查询数学90分以上或英语90分以上的同学平均分
+
+(8)按英语成绩从高到低排序
+
+(9)统计英语、数学、语文总分及平均分
+*/
+/************************************************************************/
+
+namespace mongo {
+
+bool insert_collection(mongoc_collection_t *coll, bson_t *doc, std::string &error) {
+	if (nullptr == coll || nullptr == doc) {
+		error = "collection or document is null";
+		return false;
+	}
+
+	bson_error_t err;
+	bool ret = mongoc_collection_insert_one(coll, doc, NULL, NULL, &err);
+	if (!ret) {
+		error = err.message;
+		return false;
+	} else {
+		return true;
+	}
+}
+
+std::string show_as_json(bson_t *doc) {
+	if (nullptr == doc) return std::string();
+	std::string ret;
+	char *result = bson_as_canonical_extended_json(doc, NULL);
+	if (nullptr != result) {
+		ret = result;
+		bson_free(result);
+	}
+	return ret;
+}
+
+std::vector<std::string> results_as_json(mongoc_cursor_t *cursor) {
+	if (nullptr == cursor) return std::vector<std::string>();
+	std::vector<std::string> results;
+	char *result = NULL;
+	const bson_t *qry_doc = NULL;
+	int index = 0;
+	while (mongoc_cursor_next(cursor, &qry_doc)) {//遍历查询结果集
+		result = bson_as_canonical_extended_json(qry_doc, NULL);
+		if (nullptr != result) {
+			results.push_back(std::string(result));
+			bson_free(result);
+		}
+	}
+	return results;
+}
+
+}//namespace mogo
+
+
+DEF_test(full_test) {
+	//初始化MongoDB
+	mongoc_init();
+
+	mongoc_client_t *client;
+	mongoc_collection_t *coll;
+	std::string db_name("stumanager");
+	std::string coll_name("baseinfo");
+	std::string uri("mongodb://localhost:27017/?appname=full_test");
+
+	DEF_case(create_client) {
+		client = mongoc_client_new(uri.c_str());
+		EXPECT(NULL != client);
+	}
+
+	DEF_case(get_collection) {
+		coll = mongoc_client_get_collection(client, db_name.c_str(), coll_name.c_str());
+		EXPECT(NULL != coll);
+	}
+
+	//删除所有文档
+	DEF_case(del_all_doc) {
+		COUT << "删除集合内所有文档...";
+		bson_t *doc = bson_new();
+		EXPECT(NULL != doc);
+		bson_error_t error;
+		bool ret = mongoc_collection_delete_many(coll, doc, NULL, NULL, &error);
+		EXPECT_EQ(true, ret);
+		if (!ret) COUT << "Delete failed: " << error.message;
+		bson_destroy(doc);
+		doc = NULL;
+	}
+
+	DEF_case(insert_first_students) {
+		bson_t   *document = BCON_NEW(
+			"id", BCON_UTF8("0000001"),
+			"name", BCON_UTF8("allen"),
+			"gender", BCON_UTF8("boy"),
+			"age", BCON_INT32(24),
+			"subject", "[",
+			"{", "name", BCON_UTF8("math"), "score", BCON_DOUBLE(95.00), "}",
+			"{", "name", BCON_UTF8("english"), "score", BCON_DOUBLE(88.00), "}",
+			"{", "name", BCON_UTF8("chinese"), "score", BCON_DOUBLE(79.50), "}",
+			"]");
+
+		COUT << "新增第一条文档：" << mongo::show_as_json(document);
+
+		std::string error;
+		bool ret = mongo::insert_collection(coll, document, error);
+		if (!ret) CERR << error;
+
+		bson_destroy(document);
+	}
+
+	DEF_case(insert_second_students) {
+		bson_t   *document = BCON_NEW(
+			"id", BCON_UTF8("0000002"),
+			"name", BCON_UTF8("comet"),
+			"gender", BCON_UTF8("boy"),
+			"age", BCON_INT32(21),
+			"subject", "[",
+			"{", "name", BCON_UTF8("math"), "score", BCON_DOUBLE(88.00), "}",
+			"{", "name", BCON_UTF8("english"), "score", BCON_DOUBLE(78.50), "}",
+			"{", "name", BCON_UTF8("chinese"), "score", BCON_DOUBLE(90.00), "}",
+			"]");
+
+		COUT << "新增第二条文档：" << mongo::show_as_json(document);
+
+		std::string error;
+		bool ret = mongo::insert_collection(coll, document, error);
+		if (!ret) CERR << error;
+
+		bson_destroy(document);
+	}
+
+	DEF_case(insert_third_students) {
+		bson_t   *document = BCON_NEW(
+			"id", BCON_UTF8("0000003"),
+			"name", BCON_UTF8("ciel"),
+			"gender", BCON_UTF8("girl"),
+			"age", BCON_INT32(22),
+			"subject", "[",
+			"{", "name", BCON_UTF8("math"), "score", BCON_DOUBLE(78.00), "}",
+			"{", "name", BCON_UTF8("english"), "score", BCON_DOUBLE(68.50), "}",
+			"{", "name", BCON_UTF8("chinese"), "score", BCON_DOUBLE(70.00), "}",
+			"]");
+
+		COUT << "新增第三条文档：" << mongo::show_as_json(document);
+
+		std::string error;
+		bool ret = mongo::insert_collection(coll, document, error);
+		if (!ret) CERR << error;
+
+		bson_destroy(document);
+	}
+
+	DEF_case(insert_fourth_students) {
+		bson_t   *document = BCON_NEW(
+			"id", BCON_UTF8("0000004"),
+			"name", BCON_UTF8("carol"),
+			"gender", BCON_UTF8("girl"),
+			"age", BCON_INT32(23),
+			"subject", "[",
+			"{", "name", BCON_UTF8("math"), "score", BCON_DOUBLE(88.00), "}",
+			"{", "name", BCON_UTF8("english"), "score", BCON_DOUBLE(85.50), "}",
+			"{", "name", BCON_UTF8("chinese"), "score", BCON_DOUBLE(78.00), "}",
+			"]");
+
+		COUT << "新增第四条文档：" << mongo::show_as_json(document);
+
+		std::string error;
+		bool ret = mongo::insert_collection(coll, document, error);
+		if (!ret) CERR << error;
+
+		bson_destroy(document);
+	}
+
+	DEF_case(find_all) {
+		COUT << "查询集合内所有文档...";
+		bson_t *query = bson_new();
+		EXPECT(NULL != query);
+		mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(coll, query, NULL, NULL);
+
+		std::vector<std::string> v = mongo::results_as_json(cursor);
+		for (const auto &x : v) {
+			COUT << x;
+		}
+		mongoc_cursor_destroy(cursor);
+		bson_destroy(query);
+	}
+
+	//(2)查询集合内所有男孩的文档
+	DEF_case(first_question) {
+		COUT << "查询集合内所有男孩的文档...";
+		bson_t *query = bson_new();
+		BSON_APPEND_UTF8(query, "gender", "boy");
+		EXPECT(NULL != query);
+		mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(coll, query, NULL, NULL);
+
+		std::vector<std::string> v = mongo::results_as_json(cursor);
+		for (const auto &x : v) {
+			COUT << x;
+		}
+
+		mongoc_cursor_destroy(cursor);
+		bson_destroy(query);
+	}
+
+	//(2)查询集合内所有女孩的文档
+	DEF_case(second_question) {
+		COUT << "查询集合内所有女孩的文档...";
+		bson_t *query = bson_new();
+		BSON_APPEND_UTF8(query, "gender", "girl");
+		EXPECT(NULL != query);
+		mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(coll, query, NULL, NULL);
+
+		std::vector<std::string> v = mongo::results_as_json(cursor);
+		for (const auto &x : v) {
+			COUT << x;
+		}
+
+		mongoc_cursor_destroy(cursor);
+		bson_destroy(query);
+	}
+
+	//(3)查询数学80分以上的记录：
+	//db.getCollection('baseinfo').find({"subject.name":"math","subject.score":{$gt:80.00}})
+	//查询数学80分以上的人数：
+	//db.getCollection('baseinfo').find({"subject.name":"math","subject.score":{$gt:80.00}}).count()
+	DEF_case(third_question) {
+		bson_error_t error;
+		bson_t *query = bson_new();
+		query = BCON_NEW(\
+			"subject.name","math",\
+			"subject.score",\
+			"{","$gt",BCON_INT64(80.00),"}"\
+		);
+		EXPECT(NULL != query);
+
+		int64_t count = mongoc_collection_count(
+			coll, MONGOC_QUERY_NONE, query, 0, 0, NULL, &error);
+
+		COUT << "查询数学80分以上的人数: " << count;
+		bson_destroy(query);
+	}
+
+	//(4)查询男孩数学80分以上的记录：
+	//db.getCollection('baseinfo').find({"gender":"boy","subject.name":"math","subject.score":{$gt:80.00}})
+	//查询男孩数学80分以上的人数：
+	//db.getCollection('baseinfo').find({"gender":"boy","subject.name":"math","subject.score":{$gt:80.00}}).count()
+	DEF_case(fourth_question) {
+		bson_error_t error;
+		bson_t *query = bson_new();
+		query = BCON_NEW(\
+			"gender", "boy", \
+			"subject.name", "math", \
+			"subject.score", \
+			"{", "$gt", BCON_INT64(80.00), "}"\
+		);
+		EXPECT(NULL != query);
+
+		int64_t count = mongoc_collection_count(
+			coll, MONGOC_QUERY_NONE, query, 0, 0, NULL, &error);
+
+		COUT << "查询男孩数学80分以上的人数: " << count;
+		bson_destroy(query);
+	}
+
+	//(5)查询英语80分以上或数学90分以上的人数:
+	/*
+		db.getCollection('baseinfo').find({$or:[
+			{"subject.name":"english","subject.score":{$gt:80.00}},
+			{"subject.name":"math","subject.score":{$gt:90.00}}]}
+		).count()
+	*/
+	DEF_case(fifth_question) {
+		bson_error_t error;
+		bson_t *query = bson_new();
+		query = BCON_NEW(\
+			"$or",\
+			"[",\
+				"{", \
+					"subject.name", "english",\
+					"subject.score", "{", \
+						"$gt", BCON_INT64(80.00), \
+					"}",\
+				"}",\
+				"{", \
+					"subject.name", "math", \
+					"subject.score", "{", \
+						"$gt", BCON_INT64(90.00), \
+					"}", \
+				"}", \
+			"]"
+		);
+		EXPECT(NULL != query);
+
+		int64_t count = mongoc_collection_count(
+			coll, MONGOC_QUERY_NONE, query, 0, 0, NULL, &error);
+
+		COUT << "查询英语80分以上或数学90分以上的人数: " << count;
+		bson_destroy(query);
+	}
+
+	//(6)查询数学90分以上或英语80分以上的总分
+	/*
+		db.getCollection('baseinfo').aggregate([
+			{$match:{
+				$or:[
+					{"subject.name":"english","subject.score":{$gt:80.00}},
+					{"subject.name":"math","subject.score":{$gt:90.00}}
+				]
+			}},
+			{$unwind: "$subject"},
+			{$group:{_id:{name:"$name"},sum:{$sum:"$subject.score"}}}
+		])
+	*/
+	DEF_case(sixth_question) {
+	}
+
+	//(7)查询数学90分以上或英语90分以上的平均分
+	/*
+		db.getCollection('baseinfo').aggregate([
+			{$match:{
+				$or:[
+					{"subject.name":"english","subject.score":{$gt:80.00}},
+					{"subject.name":"math","subject.score":{$gt:90.00}}
+				]
+			}},
+			{$unwind: "$subject"},
+			{$group:{_id:{name:"$name"},avg:{$avg:"$subject.score"}}}
+		])
+	*/
+
+	//(8)按英语成绩从高到低排序（非关系数据库内联操作比较麻烦，如果存在这样的操作，最好重新设计文档结构，
+	//在这里通过管道实现，即上一个命令的输出作为下一个命令的输入）
+	/*
+		db.getCollection('baseinfo').aggregate([
+			{$unwind: "$subject"},
+			{$group:{_id:{name:"$name",subname:"$subject.name",score:"$subject.score"}}},
+			{$match:{"_id.subname":"english"}},
+			{$sort:{"_id.score":-1}}
+		])
+
+		db.getCollection('baseinfo').aggregate([
+			{$match:{
+				$or:[
+					{"subject.name":"english","subject.score":{$gt:80.00}},
+					{"subject.name":"math","subject.score":{$gt:90.00}}
+				]
+			}},
+			{$unwind: "$subject"},
+			{$group:{_id:{name:"$name",subname:"$subject.name",score:"$subject.score"}}},
+            {$match:{"_id.subname":"english"}},
+            {$sort:{"_id.score":-1}}
+		])
+	*/
+
+	//(9)统计所有人英语、数学、语文总分及平均分
+	/*
+		//所有人英语总分
+		db.getCollection('baseinfo').aggregate([
+			{$unwind: "$subject"},
+			{$group:{_id:{name:"$name",subname:"$subject.name",score:"$subject.score"}}},
+            {$match:{"_id.subname":"english"}},
+			{$unwind: "$_id"},
+			{$group:{_id:"english",sum:{$sum:"$_id.score"}}}
+		])
+
+		//所有人英语平均分
+		db.getCollection('baseinfo').aggregate([
+			{$unwind: "$subject"},
+			{$group:{_id:{name:"$name",subname:"$subject.name",score:"$subject.score"}}},
+			{$match:{"_id.subname":"english"}},
+			{$unwind: "$_id"},
+			{$group:{_id:"english",avg:{$avg:"$_id.score"}}}
+		])
+
+		//所有人数学总分
+		db.getCollection('baseinfo').aggregate([
+			{$unwind: "$subject"},
+			{$group:{_id:{name:"$name",subname:"$subject.name",score:"$subject.score"}}},
+			{$match:{"_id.subname":"math"}},
+			{$unwind: "$_id"},
+			{$group:{_id:"math",sum:{$sum:"$_id.score"}}}
+		])
+
+		//所有人数学平均分
+		db.getCollection('baseinfo').aggregate([
+			{$unwind: "$subject"},
+			{$group:{_id:{name:"$name",subname:"$subject.name",score:"$subject.score"}}},
+			{$match:{"_id.subname":"math"}},
+			{$unwind: "$_id"},
+			{$group:{_id:"math",avg:{$avg:"$_id.score"}}}
+		])
+
+		//所有人语文总分
+		db.getCollection('baseinfo').aggregate([
+			{$unwind: "$subject"},
+			{$group:{_id:{name:"$name",subname:"$subject.name",score:"$subject.score"}}},
+			{$match:{"_id.subname":"chinese"}},
+			{$unwind: "$_id"},
+			{$group:{_id:"chinese",sum:{$sum:"$_id.score"}}}
+		])
+
+		//所有人语文平均分
+		db.getCollection('baseinfo').aggregate([
+			{$unwind: "$subject"},
+			{$group:{_id:{name:"$name",subname:"$subject.name",score:"$subject.score"}}},
+			{$match:{"_id.subname":"chinese"}},
+			{$unwind: "$_id"},
+			{$group:{_id:"chinese",avg:{$avg:"$_id.score"}}}
+		])
+	*/
+
+	mongoc_collection_destroy(coll);
+	mongoc_client_destroy(client);
+	mongoc_cleanup();
+}
 
 }//namespace test
