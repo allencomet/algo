@@ -5,6 +5,7 @@
 
 #include <time.h>
 #include <errno.h>
+#include <signal.h>
 #include <string.h>
 #include <pthread.h>
 #include <map>
@@ -306,7 +307,12 @@ namespace safe{
 
 		void join() {
 			pthread_t id = atomic_swap(&_tid, 0);
-			if (id != 0) pthread_join(id, NULL);
+			//if (id != 0) pthread_join(id, NULL);
+			if (id > 0 && (0 == pthread_kill(id, 0))) {
+				pthread_cancel(id);
+				pthread_join(id, NULL);
+				id = 0;
+			}
 		}
 
 		void detach() {

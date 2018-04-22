@@ -4,6 +4,16 @@
 #include <bson.h>
 #include <bcon.h>
 
+#if __cplusplus >= 201103L
+
+#include <functional>
+
+#else
+
+#include <boost/function.hpp>
+
+#endif
+
 /*	通过配置文件启动MongoDB
 
 mongodb的参数说明：
@@ -1198,6 +1208,147 @@ DEF_test(full_test) {
 
 	mongoc_collection_destroy(coll);
 	mongoc_client_destroy(client);
+	mongoc_cleanup();
+}
+
+namespace anony{
+
+typedef struct MonQry {
+	bson_t *query;
+	int32 flow;
+}MonQry;
+
+typedef struct MonRsp {
+	std::string result;
+	int32 flow;
+}MonRsp;
+
+safe::block_queue<MonQry> qry;
+safe::block_queue<MonRsp> rsp;
+safe::SyncEvent ev_build;
+
+
+void qry_doc(mongoc_client_t *client, anony::MonQry &pack) {
+	std::string db_name("stumanager");
+	std::string coll_name("baseinfo");
+
+	mongoc_collection_t *coll = mongoc_client_get_collection(client, db_name.c_str(), coll_name.c_str());
+
+	mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(coll, pack.query, NULL, NULL);
+
+	std::vector<std::string> v = mongo::results_as_json(cursor);
+	for (const auto &x : v) COUT << x;
+	mongoc_cursor_destroy(cursor);
+
+	bson_destroy(pack.query);
+	mongoc_collection_destroy(coll);
+}
+
+}//namespace anony
+
+
+void qry_worker(mongoc_client_pool_t *pool) {
+	for (;;) {
+		anony::MonQry pack;
+		if (anony::qry.pop(pack)) {
+			// 从连接池取出一条连接
+			mongoc_client_t *client = mongoc_client_pool_pop(pool);
+
+			anony::qry_doc(client, pack);
+
+			// 用完后需要还回客户端池
+			mongoc_client_pool_push(pool, client);
+		}
+	}
+}
+
+void rsp_worker() {
+	for (;;) {
+		anony::MonRsp pack;
+		anony::rsp.pop(pack);
+
+		// do something
+		
+	}
+}
+
+void build_qry() {
+	for (int i = 0; i < 100; ++i) {
+		bson_t *query = bson_new();
+
+		anony::MonQry pack;
+		pack.query = query;
+		pack.flow = i;
+
+		anony::qry.push(pack);
+	}
+
+	sys::sleep(5);
+	anony::ev_build.signal();
+}
+
+DEF_test(mongo_mt) {
+	safe::Thread th_rsp(
+#if __cplusplus >= 201103L
+		std::bind(&rsp_worker)
+#else
+		boost::bind(&rsp_worker)
+#endif
+	);
+	th_rsp.start();
+
+	mongoc_client_pool_t *pool;
+	mongoc_uri_t         *uri;
+
+	mongoc_init();
+
+	uri = mongoc_uri_new("mongodb://localhost:27017/?appname=mongo_threadpool");
+	// 创建客户端池
+	pool = mongoc_client_pool_new(uri);
+
+#if __cplusplus >= 201103L
+	typedef std::shared_ptr<safe::Thread> ThreadPtr;
+#else
+	typedef boost::shared_ptr<safe::Thread> ThreadPtr;
+#endif
+	std::vector<ThreadPtr> threads;
+	for (int i = 0; i < 10; ++i) {
+#if __cplusplus >= 201103L
+		ThreadPtr thr(new safe::Thread(std::bind(&qry_worker, pool)));
+#else
+		ThreadPtr thr(new boost::Thread(boost::bind(&qry_worker, pool)));
+#endif
+		thr->start();
+		threads.push_back(thr);
+	}
+
+	safe::Thread th_build(
+#if __cplusplus >= 201103L
+		std::bind(&build_qry)
+#else
+		boost::bind(&build_qry)
+#endif
+	);
+	th_build.start();
+
+	anony::ev_build.wait();
+	COUT << "创建查询请求完毕，准备回收BUILD线程...";
+
+	th_build.join();
+	COUT << "回收BUILD线程完毕...";
+
+
+	COUT << "查询请求处理完毕，准备回收QUERY线程...";
+	for (int i = 0; i < threads.size(); ++i) {
+		threads[i]->join();
+	}
+	COUT << "回收QUERY线程完毕...";
+
+	th_rsp.join();
+
+	// 释放客户端池
+	mongoc_client_pool_destroy(pool);
+	mongoc_uri_destroy(uri);
 	mongoc_cleanup();
 }
 
