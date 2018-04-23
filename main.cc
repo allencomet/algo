@@ -60,9 +60,6 @@ DEF_test(main) {
 
 int main(int argc,char **argv){
     /*FLG_main = true;
-
-   
-
 	char *p = NULL;
 	char *p2 = p;
 	p2 = new char[1];
