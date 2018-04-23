@@ -21,7 +21,6 @@ std::vector<std::string> MongoHelper::find_all() {
 
 	char *result = NULL;
 	const bson_t *qry_doc = NULL;
-	int index = 0;
 	while (mongoc_cursor_next(cursor, &qry_doc)) {//遍历查询结果集
 		result = bson_as_canonical_extended_json(qry_doc, NULL);
 		if (nullptr != result) {
@@ -33,6 +32,25 @@ std::vector<std::string> MongoHelper::find_all() {
 	mongoc_cursor_destroy(cursor);
 	bson_destroy(query);
 
+	return results;
+}
+
+std::vector<std::string> MongoHelper::find(MongoDoc &doc) {
+	std::vector<std::string> results;
+
+	mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(_collection, doc.doc(), NULL, NULL);
+
+	char *result = NULL;
+	const bson_t *qry_doc = NULL;
+	while (mongoc_cursor_next(cursor, &qry_doc)) {//遍历查询结果集
+		result = bson_as_canonical_extended_json(qry_doc, NULL);
+		if (nullptr != result) {
+			results.push_back(std::string(result));
+			bson_free(result);
+		}
+	}
+
+	mongoc_cursor_destroy(cursor);
 	return results;
 }
 

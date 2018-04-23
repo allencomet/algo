@@ -66,6 +66,14 @@ public:
 	}
 
 	std::string to_json();
+
+	void append(const std::string &key, const std::string value) {
+		BSON_APPEND_UTF8(_doc, key.c_str(), value.c_str());
+	}
+
+	bson_t *doc() {
+		return _doc;
+	}
 private:
 	bson_t *_doc;
 	DISALLOW_COPY_AND_ASSIGN(MongoDoc);
@@ -90,6 +98,7 @@ public:
 	}
 
 	std::vector<std::string> find_all();
+	std::vector<std::string> find(MongoDoc &doc);
 
 	bool remove_all();
 

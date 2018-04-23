@@ -1364,10 +1364,31 @@ DEF_test(mongo_wrap) {
 	std::string coll_name("baseinfo");
 	dbmongo::MongoHelper mongohelper(client, db_name, coll_name);
 
-	std::vector<std::string> v = mongohelper.find_all();
-	for (const auto &x : v) {
-		COUT << x;
+	DEF_case(find_all) {
+		std::vector<std::string> v = mongohelper.find_all();
+		for (const auto &x : v) {
+			COUT << x;
+		}
 	}
+	
+	DEF_case(find_boy) {
+		dbmongo::MongoDoc doc(bson_new());
+		doc.append("gender", "boy");
+		std::vector<std::string> v = mongohelper.find(doc);
+		for (const auto &x : v) {
+			COUT << x;
+		}
+	}
+
+	DEF_case(find_girl) {
+		dbmongo::MongoDoc doc(bson_new());
+		doc.append("gender", "girl");
+		std::vector<std::string> v = mongohelper.find(doc);
+		for (const auto &x : v) {
+			COUT << x;
+		}
+	}
+	
 }
 
 }//namespace test
