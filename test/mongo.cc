@@ -1,5 +1,7 @@
 #include "../util/util.h"
 
+#include "../db/mongodb/mongo_util.h"
+
 #include <mongoc.h>
 #include <bson.h>
 #include <bcon.h>
@@ -1316,7 +1318,7 @@ DEF_test(mongo_mt) {
 #if __cplusplus >= 201103L
 		ThreadPtr thr(new safe::Thread(std::bind(&qry_worker, pool)));
 #else
-		ThreadPtr thr(new boost::Thread(boost::bind(&qry_worker, pool)));
+		ThreadPtr thr(new safe::Thread(boost::bind(&qry_worker, pool)));
 #endif
 		thr->start();
 		threads.push_back(thr);
@@ -1350,6 +1352,22 @@ DEF_test(mongo_mt) {
 	mongoc_client_pool_destroy(pool);
 	mongoc_uri_destroy(uri);
 	mongoc_cleanup();
+}
+
+DEF_test(mongo_wrap) {
+	dbmongo::MongoInit mongoinit;
+
+	std::string uri("mongodb://localhost:27017/?appname=mongo_wrap");
+	dbmongo::MongoClient client(uri);
+
+	std::string db_name("stumanager");
+	std::string coll_name("baseinfo");
+	dbmongo::MongoHelper mongohelper(client, db_name, coll_name);
+
+	std::vector<std::string> v = mongohelper.find_all();
+	for (const auto &x : v) {
+		COUT << x;
+	}
 }
 
 }//namespace test
