@@ -1,7 +1,7 @@
 CC = gcc
 TARGET = exe
 
-#±àÒëÔ´ÂëÑ°ÕÒÍ·ÎÄ¼şÂ·¾¶
+#ç¼–è¯‘æºç å¯»æ‰¾å¤´æ–‡ä»¶è·¯å¾„
 CXXPATH = -I. -I/usr/local/include/libbson-1.0 -I/usr/local/include/libmongoc-1.0
 
 #Pass the flag -export-dynamic to the ELF linker, on targets that support it. 
@@ -15,33 +15,35 @@ CXXPATH = -I. -I/usr/local/include/libbson-1.0 -I/usr/local/include/libmongoc-1.
 #When using the GNU linker, you can also get the same effect with -Wl,-Map=output.map.
 
 #refer to https://stackoverflow.com/questions/8623884/gcc-debug-symbols-g-flag-vs-linkers-rdynamic-option
+#and https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html
 LINKFLAGS = -Wl,--no-as-needed -rdynamic
 
-#gccÃüÁîÖ§³Ö-Dºê¶¨Òå£¬Ïàµ±ÓÚCÖĞµÄÈ«¾Ö#define
+#gccå‘½ä»¤æ”¯æŒ-Då®å®šä¹‰ï¼Œç›¸å½“äºCä¸­çš„å…¨å±€#define
 CXXDEFINES = -DDEBUG=1 -D_FILE_OFFSET_BITS=64
 
-#C++ÓïÑÔ±àÒëÆ÷²ÎÊı
+#C++è¯­è¨€ç¼–è¯‘å™¨å‚æ•°
 CXXFLAGS = -std=c++0x -g2 -O2 -Werror -Wno-deprecated
 
-#Á´½ÓÆ÷²ÎÊı
+#é“¾æ¥å™¨å‚æ•°
 LDFLAGS = -lstdc++ -lm -lpthread -ldl -lrt -lmongoc-1.0 -lbson-1.0
 
-#ÁĞ³öÒÀÀµµÄËùÓĞÍ·ÎÄ¼ş
+#åˆ—å‡ºä¾èµ–çš„æ‰€æœ‰å¤´æ–‡ä»¶
 DEPS = $(shell find ./ -name "*.h")
 
-#ÁĞ³öÒÀÀµµÄËùÓĞÔ´ÎÄ¼ş
+#åˆ—å‡ºä¾èµ–çš„æ‰€æœ‰æºæ–‡ä»¶
 SRC = $(shell find ./ -name "*.cc")
 
-#$(src:%.cc=%.o)ÔòÊÇÒ»¸ö×Ö·ûÌæ»»º¯Êı£¬Ëü»á½«srcËùÓĞµÄ.cc×Ö´®Ìæ»»³É.o£¬
-#Êµ¼ÊÉÏ¾ÍµÈÓÚÁĞ³öÁËËùÓĞ.ccÎÄ¼şÒª±àÒëµÄ½á¹û£¬ÓĞÁËÕâÁ½¸öÉè¶¨£¬ÎŞÂÛÎÒÃÇ½ñ
-#ºóÔÚ¸Ã¹¤³Ì¼ÓÈë¶àÉÙ.ccºÍ.hÎÄ¼ş£¬Makefile¶¼ÄÜ×Ô¶¯½«ÆäÄÉÈëµ½¹¤³ÌÖĞÀ´
+#$(src:%.cc=%.o)åˆ™æ˜¯ä¸€ä¸ªå­—ç¬¦æ›¿æ¢å‡½æ•°ï¼Œå®ƒä¼šå°†srcæ‰€æœ‰çš„.ccå­—ä¸²æ›¿æ¢æˆ.oï¼Œ
+#å®é™…ä¸Šå°±ç­‰äºåˆ—å‡ºäº†æ‰€æœ‰.ccæ–‡ä»¶è¦ç¼–è¯‘çš„ç»“æœï¼Œæœ‰äº†è¿™ä¸¤ä¸ªè®¾å®šï¼Œæ— è®ºæˆ‘ä»¬ä»Š
+#ååœ¨è¯¥å·¥ç¨‹åŠ å…¥å¤šå°‘.ccå’Œ.hæ–‡ä»¶ï¼ŒMakefileéƒ½èƒ½è‡ªåŠ¨å°†å…¶çº³å…¥åˆ°å·¥ç¨‹ä¸­æ¥
 OBJ = $(SRC:%.cc=%.o) 
 
 $(TARGET): $(OBJ)
 	$(CC) $(LINKFLAGS) $(LDFLAGS) -o $(TARGET) $(OBJ)
 
-#$@´ú±íµÄÊÇµ±Ç°Óï¾äµÄÄ¿±ê£¬$<´ú±íµÄÊÇÒÀÀµ¹ØÏµ±íÖĞµÄµÚÒ»Ïî£¬ÒıÓÃµÄÊÇÕû¸ö¹ØÏµ±íÊ¹ÓÃ$^
-#ÕâÊÇÒ»¸öÄ£Ê½¹æÔò£¬±íÊ¾ËùÓĞµÄ.oÄ¿±ê¶¼ÒÀÀµÓÚÓëËüÍ¬ÃûµÄ.ccÎÄ¼ş£¨µ±È»»¹ÓĞDEPSÖĞÁĞ³öµÄÍ·ÎÄ¼ş£©
+#$@ä»£è¡¨çš„æ˜¯å½“å‰è¯­å¥çš„ç›®æ ‡ï¼Œ$<ä»£è¡¨çš„æ˜¯ä¾èµ–å…³ç³»è¡¨ä¸­çš„ç¬¬ä¸€é¡¹ï¼Œå¼•ç”¨çš„æ˜¯æ•´ä¸ªå…³ç³»è¡¨ä½¿ç”¨$^
+#è¿™æ˜¯ä¸€ä¸ªæ¨¡å¼è§„åˆ™ï¼Œè¡¨ç¤ºæ‰€æœ‰çš„.oç›®æ ‡éƒ½ä¾èµ–äºä¸å®ƒåŒåçš„.ccæ–‡ä»¶ï¼ˆå½“ç„¶è¿˜æœ‰DEPSä¸­åˆ—å‡ºçš„å¤´æ–‡ä»¶ï¼‰
+#æ ¼å¼ï¼š<targets...>: <target-pattern>: <prereq-patterns ...>
 %.o: %.cc $(DEPS)
 	$(CC) -c $(CXXPATH) $(CXXDEFINES) $(CXXFLAGS) $< -o $@
 
