@@ -23,6 +23,7 @@ AUX_SOURCE_DIRECTORY(./base/ccflag BASE_FLAG_DIR_SRCS)
 AUX_SOURCE_DIRECTORY(./base/cclog BASE_LOG_DIR_SRCS)
 AUX_SOURCE_DIRECTORY(./base/cctest BASE_TEST_DIR_SRCS)
 AUX_SOURCE_DIRECTORY(./test TEST_DIR_SRCS)
+AUX_SOURCE_DIRECTORY(./test/cpp0x TEST_C11_DIR_SRCS)
 AUX_SOURCE_DIRECTORY(./algo/impl ALGO_IMPL_DIR_SRCS)
 AUX_SOURCE_DIRECTORY(./design DESIGN_DIR_SRCS)
 AUX_SOURCE_DIRECTORY(./db/mongodb DB_MONGO_DIR_SRCS)
@@ -36,6 +37,9 @@ INCLUDE_DIRECTORIES(/usr/local/include/libmongoc-1.0)
 
 # 设置链接的库文件目录
 LINK_DIRECTORIES(/usr/local/lib)
+
+# 设置依赖的库文件
+LINK_LIBRARIES(stdc++ m pthread dl rt mongoc-1.0 bson-1.0)
 
 # ADD_SUBDIRECTORY 指明本项目包含的子目录（用于在每层子目录单独一个CMakeLists.txt文件时生效）
 #ADD_SUBDIRECTORY( base )
@@ -52,6 +56,7 @@ ADD_EXECUTABLE(exe  ${DIR_SRCS}
                     ${BASE_LOG_DIR_SRCS}
                     ${BASE_TEST_DIR_SRCS}
                     ${TEST_DIR_SRCS}
+					${TEST_C11_DIR_SRCS}
 					${ALGO_IMPL_DIR_SRCS}
                     ${DESIGN_DIR_SRCS}
                     ${DB_MONGO_DIR_SRCS}
@@ -61,4 +66,4 @@ ADD_EXECUTABLE(exe  ${DIR_SRCS}
                     )
 
 # TARGET_LINK_LIBRARIES 指明可执行文件 exe 依赖的链接库
-TARGET_LINK_LIBRARIES( exe stdc++ m pthread dl rt mongoc-1.0 bson-1.0)
+TARGET_LINK_LIBRARIES(exe stdc++ m pthread dl rt mongoc-1.0 bson-1.0)
