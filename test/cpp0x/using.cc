@@ -70,18 +70,37 @@ DEF_test(hist) {
 
 using RspMsg = std::tuple<int32, std::string>;
 using QryMsg = std::tuple<int32, std::string>;
-RspMsg query(const QryMsg &msg) {
+using AuxMsg = std::tuple<int32, std::string>;
+RspMsg query(const QryMsg &msg,const AuxMsg &aux) {
 	COUT << "msg id: " << std::get<0>(msg) << ",msg data: " << std::get<1>(msg);
+	COUT << "aux id: " << std::get<0>(aux) << ",aux data: " << std::get<1>(aux);
 	return std::make_tuple(0, "successful");
 }
 
 DEF_test(std_ref) {
-	using fun = std::function<RspMsg(const QryMsg &)>;
+	using fun = std::function<RspMsg(const QryMsg &, const AuxMsg &)>;
+	using funEx = std::function<RspMsg()>;
 
-	QryMsg qry = std::make_tuple(29, "hello");
-	fun f = std::bind(query, std::placeholders::_1);
-	const RspMsg rsp = f(std::cref(qry));
-	COUT << "rsp number: " << std::get<0>(rsp) << ",rsp msg: " << std::get<1>(rsp);
+	DEF_case(case01) {
+		QryMsg qry = std::make_tuple(29, "hello");
+		AuxMsg aux = std::make_tuple(-1, "auxilary");
+		fun f = std::bind(query, std::placeholders::_1, std::placeholders::_2);
+		//const RspMsg rsp = f(std::cref(qry));
+		const RspMsg rsp = f(qry, aux);
+		COUT << "rsp number: " << std::get<0>(rsp) << ",rsp msg: " << std::get<1>(rsp);
+	}
+	
+	DEF_case(case02) {
+		QryMsg qry = std::make_tuple(29, "hello");
+		AuxMsg aux = std::make_tuple(-1, "auxilary");
+		auto f = std::bind(query, std::cref(qry), std::cref(aux));
+		funEx fe = std::bind(query, std::cref(qry), std::cref(aux)); //如果用这种方式需要转成funEx
+		RspMsg rsp = f();
+		COUT << "rsp number: " << std::get<0>(rsp) << ",rsp msg: " << std::get<1>(rsp);
+
+		rsp = fe();
+		COUT << "rsp number: " << std::get<0>(rsp) << ",rsp msg: " << std::get<1>(rsp);
+	}
 }
 
 }//namespace test
