@@ -5,6 +5,9 @@
 #include <random>
 #include <cmath>
 
+#include <unordered_map>
+#include <unordered_set>
+
 namespace test {
 
 // 可以用于模板
@@ -101,6 +104,115 @@ DEF_test(std_ref) {
 		rsp = fe();
 		COUT << "rsp number: " << std::get<0>(rsp) << ",rsp msg: " << std::get<1>(rsp);
 	}
+}
+
+
+
+
+class Monitor {
+public:
+	Monitor() {}
+	~Monitor() {}
+
+	void init_function(int32 func) {
+		auto it = _fun_info.find(func);
+		if (it == _fun_info.end()) {
+			FunInfo info;
+			info._last_time = sys::utc.sec();
+			++info._use_count;
+			_fun_info.insert(std::make_pair(func, info));
+		} else {
+			FunInfo &info = it->second;
+			info._last_time = sys::utc.sec();
+			++info._use_count;
+		}
+	}
+
+	void set_end_time(int32 func, int64 val) {
+		auto it = _fun_info.find(func);
+		if (it != _fun_info.end()) {
+			FunInfo &info = it->second;
+
+			info._max_time = val > info._max_time ? val : info._max_time;
+			info._min_time = val < info._max_time ? val : info._min_time;
+			info._use_time = (info._use_time*(info._use_count - 1) + val) / (info._use_count);//int64保存不下时可能会溢出
+		}
+	}
+
+	void show_info(int32 func) {
+		auto it = _fun_info.find(func);
+		if (it != _fun_info.end()) {
+			FunInfo &info = it->second;
+			COUT << "use count: " << info._use_count << "times, use time: " << info._use_time << "ms, max time: " <<
+				info._max_time << "ms, min time: " << info._min_time << "ms, last time: " << info._last_time;
+		}
+	}
+private:
+	class FunInfo {
+	public:
+		FunInfo() :_use_count(0), _use_time(0), _max_time(0), _min_time(0), _last_time(0){}
+		~FunInfo() = default;
+
+		int32 _use_count;	// 调用次数
+		int32 _use_time;	// 调用平均耗时 ms
+		int32 _max_time;	// 调用最长耗时 ms
+		int32 _min_time;	// 调用最短耗时 ms
+		int64 _last_time;	// 调用最后时间戳 s
+	};
+
+	std::unordered_map<int32, FunInfo> _fun_info;	// count of use
+
+	DISALLOW_COPY_AND_ASSIGN(Monitor);
+};
+
+class MonGuard {
+public:
+	MonGuard(Monitor &mon,int32 func):_monitor(mon),_func(func){
+		_monitor.init_function(_func);
+		_t.restart();
+	}
+
+	~MonGuard() {
+		_monitor.set_end_time(_func, _t.ms());
+	}
+private:
+	Monitor &_monitor;
+	int32 _func;
+	sys::timer _t;
+};
+
+class BaseRequest {
+public:
+	BaseRequest() :flow(0), func(0), type(0) {}
+	~BaseRequest() = default;
+
+	int32 flow;	// 流水号
+	int32 func;
+	int32 type; // 消息类型
+	std::string content;
+};
+
+static Monitor kMonitor;
+
+std::vector<std::string> vv(1 << 25);
+
+void invoke_function(Monitor &mon, const BaseRequest &req) {
+	MonGuard g(mon, req.func);
+	// do something
+	std::vector<std::string> temp = vv;
+	COUT << "flow: " << req.flow << ", copy done";
+}
+
+DEF_test(bind_usage) {
+	auto bind_fun = std::bind(invoke_function, std::ref(kMonitor), std::placeholders::_1);
+
+	BaseRequest req;
+	req.func = 100;
+	for (int i = 0; i < 100; ++i) {
+		req.flow = i + 1;
+		bind_fun(req);
+	}
+	kMonitor.show_info(req.func);
 }
 
 }//namespace test
