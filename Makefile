@@ -2,7 +2,7 @@ CC = gcc
 TARGET = exe
 
 #编译源码寻找头文件路径
-CXXPATH = -I. -I/usr/local/include/libbson-1.0 -I/usr/local/include/libmongoc-1.0
+CXXPATH = -I. -I/usr/local/include -I/usr/local/include/libbson-1.0 -I/usr/local/include/libmongoc-1.0
 
 #Pass the flag -export-dynamic to the ELF linker, on targets that support it. 
 #This instructs the linker to add all symbols, not only used ones, to the dynamic 
@@ -19,13 +19,13 @@ CXXPATH = -I. -I/usr/local/include/libbson-1.0 -I/usr/local/include/libmongoc-1.
 LINKFLAGS = -Wl,--no-as-needed -rdynamic
 
 #gcc命令支持-D宏定义，相当于C中的全局#define
-CXXDEFINES = -DDEBUG=1 -D_FILE_OFFSET_BITS=64
+CXXDEFINES = -DDEBUG=1 -D_FILE_OFFSET_BITS=64 -DJEMALLOC_NO_DEMANGLE=1
 
 #C++语言编译器参数
 CXXFLAGS = -std=c++0x -g2 -O2 -Werror -Wno-deprecated
 
 #链接器参数
-LDFLAGS = -lstdc++ -lm -lpthread -ldl -lrt -lmongoc-1.0 -lbson-1.0
+LDFLAGS = -lstdc++ -lm -lpthread -ldl -lrt -ljemalloc -lmongoc-1.0 -lbson-1.0
 
 #列出依赖的所有头文件
 DEPS = $(shell find ./ -name "*.h")

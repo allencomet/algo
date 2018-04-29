@@ -3,7 +3,10 @@
 #include <vector>
 #include <memory>
 
-namespace test {
+// 所谓孤儿进程：父亲死了，政府救济
+// 所谓僵尸进程：儿子死了，未得善终
+
+namespace {
 
 class B;
 class A {
@@ -29,6 +32,7 @@ public:
 	std::shared_ptr<A> _aptr;
 };
 
+// 有互相依赖关系时使用弱指针
 class CorrectB;
 class CorrectA {
 public:
@@ -51,7 +55,10 @@ public:
 	}
 	std::weak_ptr<CorrectA> _aptr;
 };
-	
+
+}
+
+namespace test {
 
 DEF_test(bad_solution) {
 
@@ -118,6 +125,33 @@ DEF_test(use_weak_ptr) {
 	}
 }
 
+// 智能指针的删除器
+template<typename T>
+static void shared_deleter(T *ptr) {
+	delete ptr;
+	ptr = nullptr;
+	std::clog << "shared_ptr delete the pointer." << std::endl;
+}
 
+template<typename T>
+static void unique_deleter(T *ptr) {
+	delete ptr;
+	ptr = nullptr;
+	std::clog << "unique_ptr delete the pointer." << std::endl;
+}
+
+
+// 自定义shared_ptr的删除器
+DEF_test(shared_deleter) {
+	std::shared_ptr<int> spi(new int(10), shared_deleter<int>);
+
+	std::shared_ptr<int> spi2(new int, shared_deleter<int>);
+	spi2 = std::make_shared<int>(20);
+}
+
+// unique_ptr是模板函数需要删除器(deleter)类型, 再传入具体的删除器
+DEF_test(unique_deleter) {
+	std::unique_ptr<int, decltype(unique_deleter<int>)*> upi(new int(20), unique_deleter<int>);
+}
 
 }//namespace test

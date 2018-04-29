@@ -5,6 +5,7 @@
 #include "md5.h"
 #include "crc.h"
 #include "json/json.h"
+#include "../base/allocator.h"
 #include "../base/thread_util.h"
 #include "../base/process_util.h"
 #include "../base/sys.h"
@@ -15,6 +16,7 @@
 #include "../base/exception_catch.h"
 #include "../base/death_handler.h"
 #include "../base/base.h"
+
 
 #if __cplusplus >= 201103L
 #include <unordered_map>

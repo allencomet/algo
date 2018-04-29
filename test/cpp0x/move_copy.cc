@@ -3,8 +3,7 @@
 #include <algorithm>
 #include <string>
 
-//ADL: Arguement Dependent name Lookup
-namespace test {
+namespace {
 
 //Rvalue references are a feature of C++ that was added with the C++11 standard. 
 //The syntax of an rvalue reference is to add && after a type.
@@ -12,7 +11,7 @@ template<typename Value>
 class DynArray {
 public:
 	// (default) constructor
-	DynArray(size_t size = 0) 
+	DynArray(size_t size = 0)
 		:_size(size),
 		_data(_size == 0 ? nullptr : new Value[_size]) {
 		COUT << "default-constructor";
@@ -30,7 +29,7 @@ public:
 	// then takes the copied data with a swap function, swapping the old data with the new data. 
 	// The temporary copy then destructs, taking the old data with it. We are left with a copy of the new data.
 	DynArray(const DynArray &arr)
-		:_size(arr._size), 
+		:_size(arr._size),
 		_data(_size == 0 ? nullptr : new Value[_size]) {
 		COUT << "copy-constructor";
 		// note that this is non-throwing, because of the data  
@@ -41,7 +40,7 @@ public:
 
 	// move-constructor
 	DynArray(DynArray &&arr)
-		:DynArray(){ // initialize via default constructor, C++11 only
+		:DynArray() { // initialize via default constructor, C++11 only
 		COUT << "move-constructor";
 		swap(*this, arr);
 	}
@@ -96,78 +95,6 @@ private:
 	Value *_data;
 };
 
-DEF_test(rref) {	
-	DynArray<std::string> arr(1 << 10);
-	//DynArray<std::string> rarr = std::move(DynArray<std::string>());
-	//DynArray<std::string> larr = DynArray<std::string>();
-
-	for (int i = 0; i < 2; ++i) {
-		//DynArray<std::string> temp(DynArray<std::string>(10));	// How does it work? --default constructor
-		//DynArray<std::string> temp(arr);	// How does it work? --copy constructor
-		//DynArray<std::string> temp(std::move(DynArray<std::string>()));	// How does it work? --move constructor
-		//arr = std::move(DynArray<std::string>());	// How does it work? --assignment operator
-		arr = DynArray<std::string>();	// How does it work? --assignment operator
-	}
-
-	/*
-	DynArray<char> str(1 << 10);
-	for (int i = 0; i < 2; ++i) {
-		DynArray<char> temp(DynArray<char>(10));	// How does it work? --default constructor
-	}
-
-	std::string old_str("abc");
-	//std::string new_str = std::move("abc");
-	std::string new_str = std::move(old_str);
-	COUT << "after moveing: " << new_str << ",old_str: " << old_str;
-	*/
-}
-
-std::vector<std::string> v(1 << 25);
-
-DEF_test(copy) {
-	try {
-		std::vector<std::string> temp = v;
-	} catch (std::exception &e) {
-		CERR << e.what();
-	}
-}
-
-DEF_test(move) {
-	try {
-		std::vector<std::string> temp = std::move(v);
-	} catch (std::exception &e) {
-		CERR << e.what();
-	}
-}
-
-
-template<typename T>
-void PrintT(T& t) {
-	COUT << "lvaue";
-}
-
-template<typename T>
-void PrintT(T && t) {
-	COUT << "rvalue";
-}
-
-template<typename T>
-void TestForward(T && v) {
-	PrintT(v);
-	PrintT(std::forward<T>(v));
-	PrintT(std::move(v));
-}
-
-DEF_test(forward) {
-	//TestForward(1);	// lvalue rvalue rvalue
-
-	// 被一个左值初始化后变成了一个左值引用
-	int x = 1;
-	//TestForward(x);	// lvalue lvalue rvalue
-
-	// 
-	TestForward(std::forward<int>(x));	// lvalue rvalue rvalue
-}
 
 class MyString {
 public:
@@ -188,7 +115,7 @@ public:
 		copy_data(p);
 	}
 
-	MyString(const MyString& str):_len(str._len) {
+	MyString(const MyString& str) :_len(str._len) {
 		std::copy(str._data, str._data + _len, _data);
 		std::cout << "Copy Constructor is called! source: " << str._data << std::endl;
 	}
@@ -266,6 +193,84 @@ private:
 		_data[_len] = '\0';
 	}
 };
+
+}
+
+//ADL: Arguement Dependent name Lookup
+namespace test {
+
+DEF_test(rref) {	
+	DynArray<std::string> arr(1 << 10);
+	//DynArray<std::string> rarr = std::move(DynArray<std::string>());
+	//DynArray<std::string> larr = DynArray<std::string>();
+
+	for (int i = 0; i < 2; ++i) {
+		//DynArray<std::string> temp(DynArray<std::string>(10));	// How does it work? --default constructor
+		//DynArray<std::string> temp(arr);	// How does it work? --copy constructor
+		//DynArray<std::string> temp(std::move(DynArray<std::string>()));	// How does it work? --move constructor
+		//arr = std::move(DynArray<std::string>());	// How does it work? --assignment operator
+		arr = DynArray<std::string>();	// How does it work? --assignment operator
+	}
+
+	/*
+	DynArray<char> str(1 << 10);
+	for (int i = 0; i < 2; ++i) {
+		DynArray<char> temp(DynArray<char>(10));	// How does it work? --default constructor
+	}
+
+	std::string old_str("abc");
+	//std::string new_str = std::move("abc");
+	std::string new_str = std::move(old_str);
+	COUT << "after moveing: " << new_str << ",old_str: " << old_str;
+	*/
+}
+
+static std::vector<std::string> v(1 << 25);
+
+DEF_test(copy) {
+	try {
+		std::vector<std::string> temp = v;
+	} catch (std::exception &e) {
+		CERR << e.what();
+	}
+}
+
+DEF_test(move) {
+	try {
+		std::vector<std::string> temp = std::move(v);
+	} catch (std::exception &e) {
+		CERR << e.what();
+	}
+}
+
+
+template<typename T>
+void PrintT(T& t) {
+	COUT << "lvaue";
+}
+
+template<typename T>
+void PrintT(T && t) {
+	COUT << "rvalue";
+}
+
+template<typename T>
+void TestForward(T && v) {
+	PrintT(v);
+	PrintT(std::forward<T>(v));
+	PrintT(std::move(v));
+}
+
+DEF_test(forward) {
+	//TestForward(1);	// lvalue rvalue rvalue
+
+	// 被一个左值初始化后变成了一个左值引用
+	int x = 1;
+	//TestForward(x);	// lvalue lvalue rvalue
+
+	// 
+	TestForward(std::forward<int>(x));	// lvalue rvalue rvalue
+}
 
 DEF_test(mystr) {
 	//MyString &&str1 = std::move("abcd");

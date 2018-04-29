@@ -488,9 +488,13 @@ void FatalLogSaver::push() {
 }  // namespace xx
 
 void init_cclog(const std::string& argv0) {
+#if __cplusplus >= 201103L
+	auto it = os::path.split(argv0);
+	if (!it.second.empty()) xx::kProgName = std::move(it.second);
+#else
 	std::pair<std::string, std::string> it = os::path.split(argv0);
-	//if (!it.second.empty()) xx::kProgName = std::move(it.second);
 	if (!it.second.empty()) xx::kProgName = it.second;
+#endif
 
     xx::Logger::set_log_dir(::FLG_log_dir);
     xx::Logger::set_log_prefix(::FLG_log_prefix);

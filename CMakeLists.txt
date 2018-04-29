@@ -13,6 +13,7 @@ ADD_DEFINITIONS(-std=c++11
 				-rdynamic
 				-DDEBUG=1 
 				-D_FILE_OFFSET_BITS=64
+				-DJEMALLOC_NO_DEMANGLE=1
 				) 
 
 # AUX_SOURCE_DIRECTORY 指定目录中的源文件名称赋值给变量 DIR_SRCS
@@ -32,6 +33,7 @@ AUX_SOURCE_DIRECTORY(./util UTIL_DIR_SRCS)
 AUX_SOURCE_DIRECTORY(./util/impl UTIL_IMPL_DIR_SRCS)
 
 # 设置头文件搜索路径
+INCLUDE_DIRECTORIES(/usr/local/include)
 INCLUDE_DIRECTORIES(/usr/local/include/libbson-1.0)
 INCLUDE_DIRECTORIES(/usr/local/include/libmongoc-1.0)
 
@@ -39,7 +41,7 @@ INCLUDE_DIRECTORIES(/usr/local/include/libmongoc-1.0)
 LINK_DIRECTORIES(/usr/local/lib)
 
 # 设置依赖的库文件
-LINK_LIBRARIES(stdc++ m pthread dl rt mongoc-1.0 bson-1.0)
+LINK_LIBRARIES(stdc++ m pthread dl rt jemalloc mongoc-1.0 bson-1.0)
 
 # ADD_SUBDIRECTORY 指明本项目包含的子目录（用于在每层子目录单独一个CMakeLists.txt文件时生效）
 #ADD_SUBDIRECTORY( base )
@@ -66,4 +68,4 @@ ADD_EXECUTABLE(exe  ${DIR_SRCS}
                     )
 
 # TARGET_LINK_LIBRARIES 指明可执行文件 exe 依赖的链接库
-TARGET_LINK_LIBRARIES(exe stdc++ m pthread dl rt mongoc-1.0 bson-1.0)
+TARGET_LINK_LIBRARIES(exe stdc++ m pthread dl rt jemalloc mongoc-1.0 bson-1.0)

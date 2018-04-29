@@ -75,6 +75,9 @@ int main(int argc,char **argv){
 		COUT << "p2 is not NULL";
 	}*/
 
+	//os::init_daemon();
+	//os::daemon();
+
 	ccflag::init_ccflag(argc, argv);
 	cclog::init_cclog(argv[0]);
 
@@ -96,8 +99,7 @@ int main(int argc,char **argv){
 	//	DLOG("xxx") << "log only --dlog_on=true";
 	//	COUT << i;
 	//}
-		
-
+	
     return 0;
 }
 

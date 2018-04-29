@@ -351,4 +351,6 @@ inline bool daemon() {
     return ::daemon(1, 0);
 }
 
+void init_daemon();
+
 } // namespace os

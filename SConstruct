@@ -8,13 +8,13 @@ if ARGUMENTS.get('release', '0') == '0':
 else:
   ccflags += ['-O2', '-g0', '-Wall', ]		
 
-ccdefines = {'_FILE_OFFSET_BITS' : '64', 'DEBUG' : 1, }
+ccdefines = {'_FILE_OFFSET_BITS' : '64', 'DEBUG' : 1, 'JEMALLOC_NO_DEMANGLE': 1,}
 
 env = Environment(CC = 'gcc', 
-	LIBS = ['stdc++', 'm', 'pthread', 'dl', 'rt', 'mongoc-1.0', 'bson-1.0'], 
+	LIBS = ['stdc++', 'm', 'pthread', 'dl', 'rt', 'jemalloc', 'mongoc-1.0', 'bson-1.0'], 
 	LIBPATH = ['/usr/lib', '/usr/local/lib', './lib'], 
 	LINKFLAGS = ['-Wl,--no-as-needed','-rdynamic'],
-	CPPPATH = ['.','/usr/local/include/libbson-1.0','/usr/local/include/libmongoc-1.0'])
+	CPPPATH = ['.','/usr/local/include','/usr/local/include/libbson-1.0','/usr/local/include/libmongoc-1.0'])
 
 env.Append(CPPFLAGS = ccflags)
 env.Append(CPPDEFINES = ccdefines)
