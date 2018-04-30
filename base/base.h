@@ -81,23 +81,6 @@ namespace std {
 #endif
 }
 
-//#define CHECK(cond) \
-//	if (!(cond)) \
-//	std::cerr << __FILE__ << "[" << __LINE__  \
-//	<< "]: check failed: " #cond "! " << std::endl
-//
-//#define CHECK_OP(a, b, op) \
-//	if( !(a op b) )  \
-//	std::cerr << " check failed: " #a " " #op " " #b ", " \
-//	<< a << " vs " << b << std::endl
-//
-//#define CHECK_EQ(a, b) CHECK_OP(a, b, ==)
-//#define CHECK_NE(a, b) CHECK_OP(a, b, !=)
-//#define CHECK_GE(a, b) CHECK_OP(a, b, >=)
-//#define CHECK_LE(a, b) CHECK_OP(a, b, <=)
-//#define CHECK_GT(a, b) CHECK_OP(a, b, >)
-//#define CHECK_LT(a, b) CHECK_OP(a, b, <)
-
 
 #define	MIN(a,b)	((a) < (b) ? (a) : (b))
 #define	MAX(a,b)	((a) > (b) ? (a) : (b))

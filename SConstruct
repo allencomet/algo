@@ -24,7 +24,9 @@ common_source_files = glob('util/impl/*.cc') + \
 			glob('base/*.cc') + \
 	      	glob('base/ccflag/*.cc') + \
 	       	glob('base/cclog/*.cc') + \
-	       	glob('base/cctest/*.cc')
+	       	glob('base/cctest/*.cc') + \
+	       	glob('base/ccalloc/*.cc')
+
 
 algo_source_files = glob('algo/impl/*.cc')
 

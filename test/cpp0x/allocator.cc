@@ -1,5 +1,7 @@
 #include "../../util/util.h"
 
+#include<thread>
+#include<chrono>
 
 namespace test {
 
@@ -12,15 +14,15 @@ DEF_test(mem_std_allocator) {
 	}
 	std::cout << std::endl;*/
 
-	std::vector<std::string> v(1 << 25);
+	std::vector<std::string> v(1 << 25,"allen");
 }
 
 DEF_test(mem_own_allocator) {
-	std::vector<std::string, mem::stdmem::malloc_allocator<std::string>> v(1 << 25);
+	std::vector<std::string, mem::stdmem::malloc_allocator<std::string>> v(1 << 25,"allen");
 }
 
 DEF_test(jemem_allocator) {
-	std::vector<std::string, mem::jemem::malloc_allocator<std::string>> v(1 << 25);
+	std::vector<std::string, mem::jemem::malloc_allocator<std::string>> v(1 << 25,"allen");
 }
 
 DEF_test(jemalloc) {
@@ -49,6 +51,50 @@ DEF_test(jemalloc) {
 	printf("piyo = %p, %d.\n", piyo, *piyo);
 	je_free(piyo);
 	piyo = nullptr;
+}
+
+static void jeworker() {
+	std::cout << "ID:" << std::this_thread::get_id() << std::endl;
+	for (int i=0; i<5; ++i){
+		std::vector<std::string, mem::jemem::malloc_allocator<std::string>> v(1 << 25, "allen");
+	}
+}
+
+DEF_test(test_multithread_jemalloc) {
+	//获取CPU的核数
+	std::cout << "CPU: " << std::thread::hardware_concurrency() << std::endl;
+	using ThreadPtr = std::shared_ptr<std::thread>;
+	std::vector<ThreadPtr, mem::jemem::malloc_allocator<ThreadPtr>> v;
+	for (int i=0;i<10;++i){
+		ThreadPtr t = std::make_shared<std::thread>(jeworker);
+		v.push_back(t);
+	}
+
+	for (auto &x : v) {
+		x->join();
+	}
+}
+
+static void worker() {
+	std::cout << "ID:" << std::this_thread::get_id() << std::endl;
+	for (int i = 0; i < 5; ++i) {
+		std::vector<std::string> v(1 << 25, "allen");
+	}
+}
+
+DEF_test(test_multithread_stdmalloc) {
+	//获取CPU的核数
+	std::cout << "CPU: " << std::thread::hardware_concurrency() << std::endl;
+	using ThreadPtr = std::shared_ptr<std::thread>;
+	std::vector<ThreadPtr> v;
+	for (int i = 0; i < 10; ++i) {
+		ThreadPtr t = std::make_shared<std::thread>(worker);
+		v.push_back(t);
+	}
+
+	for (auto &x : v) {
+		x->join();
+	}
 }
 
 }//namespace test
