@@ -1,8 +1,15 @@
 #include "../../util/util.h"
 
-#define BOOST_SYSTEM_NO_DEPRACTED
+// poolç»„ä»¶æœ¬èº«æ²¡æœ‰å¤–éƒ¨ä¾èµ–ï¼Œä½†å¤´æ–‡ä»¶pool_fwd.hppé‡Œ
+// çš„singleton_poolé—´æ¥ä¾èµ–äº†boost.systemåº“ï¼Œä¸ºäº†é¿å…
+// ä¸å¿…è¦çš„é“¾æ¥é”™è¯¯ï¼Œåœ¨includeè¯­å¥å‰å®šä¹‰å¦‚ä¸‹å®
+#define BOOST_SYSTEM_NO_DEPRECATED
 #include <boost/pool/pool.hpp>
 #include <boost/pool/object_pool.hpp>
+
+/*
+	å®‰è£…booståº“ï¼š./b2 --buildtype=complete install
+*/
 
 namespace test {
 
@@ -10,25 +17,25 @@ namespace test {
 //--------------        pool		---------------
 //-------------------------------------------------
 
-// Ö»ÄÜÓÃÓÚÆÕÍ¨Êı¾İÁËĞÔÀıÈçint¡¢doubleµÈµÄÄÚ´æ³Ø£¬
-// ²»ÄÜÓÃÓÚ¸´ÔÓµÄÀàºÍ¶ÔÏó£¬ÒòÎªÖ»·ÖÅäÄÚ´æ£¬²»µ÷ÓÃ
-// ¹¹Ôìº¯Êı£¬Õâ¸öÊ±ºòÎÒÃÇĞèÒªobject_pool
+// åªèƒ½ç”¨äºæ™®é€šæ•°æ®äº†æ€§ä¾‹å¦‚intã€doubleç­‰çš„å†…å­˜æ± ï¼Œ
+// ä¸èƒ½ç”¨äºå¤æ‚çš„ç±»å’Œå¯¹è±¡ï¼Œå› ä¸ºåªåˆ†é…å†…å­˜ï¼Œä¸è°ƒç”¨
+// æ„é€ å‡½æ•°ï¼Œè¿™ä¸ªæ—¶å€™æˆ‘ä»¬éœ€è¦object_pool
 
-// poolºÜÈİÒ×Ê¹ÓÃ£¬¿ÉÒÔÏñcÖĞµÄmallocÒ»Ñù·ÖÅäÄÚ´æ£¬È»ºóËæÒâÊ¹ÓÃ¡£
-// ³ı·ÇÓĞÌØÊâµÄÒªÇó£¬·ñÔò²»±Ø¶Ô·ÖÅäµÄÄÚ´æµ÷ÓÃfreeÊÍ·Å£¬pool»áºÜºÃ
-// µÄ¹ÜÀíÄÚ´æ
+// poolå¾ˆå®¹æ˜“ä½¿ç”¨ï¼Œå¯ä»¥åƒcä¸­çš„mallocä¸€æ ·åˆ†é…å†…å­˜ï¼Œç„¶åéšæ„ä½¿ç”¨ã€‚
+// é™¤éæœ‰ç‰¹æ®Šçš„è¦æ±‚ï¼Œå¦åˆ™ä¸å¿…å¯¹åˆ†é…çš„å†…å­˜è°ƒç”¨freeé‡Šæ”¾ï¼Œpoolä¼šå¾ˆå¥½
+// çš„ç®¡ç†å†…å­˜
 
-// poolÔÚ·ÖÅäÄÚ´æÊÇ²»»áÅ×³öÒì³££¬ËùÒÔĞèÒª×Ô¼ºÊÖ¶¯ÅĞ¶Ï»ñÈ¡µÄÖ¸ÕëÊÇ·ñÎªnull
+// poolåœ¨åˆ†é…å†…å­˜æ˜¯ä¸ä¼šæŠ›å‡ºå¼‚å¸¸ï¼Œæ‰€ä»¥éœ€è¦è‡ªå·±æ‰‹åŠ¨åˆ¤æ–­è·å–çš„æŒ‡é’ˆæ˜¯å¦ä¸ºnull
 DEF_test(pool) {
 	boost::pool<> pl(sizeof(int));
 
-	int *p = static_cast<int*>(pl.malloc());// ·ÖÅäÄÚ´æ
-	EXPECT(pl.is_from(p));// ²âÊÔ¹éÊô
+	int *p = static_cast<int*>(pl.malloc());// åˆ†é…å†…å­˜
+	EXPECT(pl.is_from(p));// æµ‹è¯•å½’å±
 
 	pl.free(p);
 
 	for (int i = 0; i < 100; ++i) {
-		pl.ordered_malloc(10);// ·ÖÅäµÄÍ¬Ê±ºÏ²¢¿ÕÏĞÁ´±í£¨ÔÚÕâÀïÁ¬Ğø·ÖÅä10¿éÄÚ´æ£©
+		pl.ordered_malloc(10);// åˆ†é…çš„åŒæ—¶åˆå¹¶ç©ºé—²é“¾è¡¨ï¼ˆåœ¨è¿™é‡Œè¿ç»­åˆ†é…10å—å†…å­˜ï¼‰
 	}
 }
 
@@ -39,12 +46,64 @@ DEF_test(pool) {
 DEF_test(object_pool) {
 	boost::object_pool<std::string> pl;
 
-	// auto ¼´Îªstd::string *
-	auto p = pl.malloc(); // ·ÖÅäÒ»¸öÔ­Ê¼ÄÚ´æ¿é
-	EXPECT(pl.is_from(p));// ²âÊÔ¹éÊô
+	// auto å³ä¸ºstd::string *
+	auto p = pl.malloc(); // åˆ†é…ä¸€ä¸ªåŸå§‹å†…å­˜å—
+	EXPECT(pl.is_from(p));// æµ‹è¯•å½’å±
 
-	p = pl.construct("allen");	// ¹¹Ôì¶ÔÏó
+	p = pl.construct("allen");	// æ„é€ å¯¹è±¡
 	std::cout << *p << std::endl;
-}//ËùÓĞ´´½¨µÄ¶ÔÏóÔÚÕâÀï¶¼»á±»ÕıÈ·µÄÎö¹¹¡¢ÊÍ·ÅÄÚ´æ
+}//æ‰€æœ‰åˆ›å»ºçš„å¯¹è±¡åœ¨è¿™é‡Œéƒ½ä¼šè¢«æ­£ç¡®çš„ææ„ã€é‡Šæ”¾å†…å­˜
+
+ // é»˜è®¤æƒ…å†µä¸‹ï¼Œåœ¨ä½¿ç”¨object_poolçš„constructçš„æ—¶å€™æˆ‘ä»¬åªèƒ½æœ€å¤šä½¿ç”¨3ä¸ªå‚æ•°
+ // æ¥åˆ›å»ºå¯¹è±¡ï¼Œè¿™æ ·å°±å¯¹æˆ‘ä»¬çš„é€‚ç”¨èŒƒå›´é€ æˆäº†ä¸€å®šçš„é™åˆ¶ï¼Œæˆ‘ä»¬å¯ä»¥é¡¶ä¸€ä¸ªc++11
+ // è¾…åŠ©æ¨¡æ¿å‡½æ•°ï¼Œæ”¯æŒä»»æ„æ•°é‡çš„å‚æ•°ï¼Œå½»åº•è§£å†³è¿™ä¸ªé—®é¢˜
+template<typename P,typename ...Args>
+inline typename P::element_type* 
+construct(P& p, Args&& ...args) {
+	typename P::element_type* mem = p.malloc();
+	assert(mem != 0);
+	new (mem) typename P::element_type(std::forward<Args>(args)...);//c++11å®Œç¾è½¬å‘
+	return mem;
+}
+
+class DemonClass {
+public:
+	DemonClass(int a, int b, int c, int d):_a(a),_b(b),_c(c),_d(d) {
+		COUT << "default constructor...";
+	}
+	~DemonClass() {
+		COUT << "destructor...";
+	}
+
+	inline int a() const {
+		return _a;
+	}
+
+	inline int b() const {
+		return _b;
+	}
+
+	inline int c() const {
+		return _c;
+	}
+
+	inline int d() const {
+		return _d;
+	}
+private:
+	int _a;
+	int _b;
+	int _c;
+	int _d;
+};
+
+DEF_test(object_pool_ex) {
+	boost::object_pool<DemonClass> pl;
+	auto d = construct(pl, 1, 2, 3, 4);
+	EXPECT_EQ(1, d->a());
+	EXPECT_EQ(2, d->b());
+	EXPECT_EQ(3, d->c());
+	EXPECT_EQ(4, d->d());
+}
 
 }//namespace test

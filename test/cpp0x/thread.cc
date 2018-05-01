@@ -3,7 +3,7 @@
 #include<thread>
 #include<chrono>
 
-//Ïß³Ìº¯Êý
+//çº¿ç¨‹å‡½æ•°
 void func(int a, int b, int c) {
 	std::this_thread::sleep_for(std::chrono::seconds(3));
 	COUT << a << " " << b << " " << c;
@@ -12,17 +12,17 @@ void func(int a, int b, int c) {
 namespace test {
 
 DEF_test(test_thread_01) {
-	//´´½¨Ïß³Ì¶ÔÏót1,°ó¶¨Ïß³Ìº¯ÊýÎªfunc
+	//åˆ›å»ºçº¿ç¨‹å¯¹è±¡t1,ç»‘å®šçº¿ç¨‹å‡½æ•°ä¸ºfunc
 	std::thread t1(func, 1, 2, 3);
-	//Êä³öt1µÄÏß³ÌID
+	//è¾“å‡ºt1çš„çº¿ç¨‹ID
 	std::cout << "ID:" << t1.get_id() << std::endl;
-	//µÈ´ýt1Ïß³Ìº¯ÊýÖ´ÐÐ½áÊø
+	//ç­‰å¾…t1çº¿ç¨‹å‡½æ•°æ‰§è¡Œç»“æŸ
 	t1.join();
 }
 
 DEF_test(test_thread_02) {
 	std::thread t2(func, 2, 3, 4);
-	//ºóÌ¨Ö´ÐÐt2µÄÏß³Ìº¯Êý,²¢ÇÒ²»»áÒòÎªmainº¯Êý½áÊøÊ±,Ïß³Ìº¯ÊýÎ´Ö´ÐÐÍê¶ø²úÉúÒì³£
+	//åŽå°æ‰§è¡Œt2çš„çº¿ç¨‹å‡½æ•°,å¹¶ä¸”ä¸ä¼šå› ä¸ºmainå‡½æ•°ç»“æŸæ—¶,çº¿ç¨‹å‡½æ•°æœªæ‰§è¡Œå®Œè€Œäº§ç”Ÿå¼‚å¸¸
 	t2.detach();
 	std::cout << "after t2 ,main is runing" << std::endl;
 }

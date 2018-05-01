@@ -3,8 +3,8 @@
 #include <vector>
 #include <memory>
 
-// ËùÎ½¹Â¶ù½ø³Ì£º¸¸Ç×ËÀÁË£¬Õş¸®¾È¼Ã
-// ËùÎ½½©Ê¬½ø³Ì£º¶ù×ÓËÀÁË£¬Î´µÃÉÆÖÕ
+// æ‰€è°“å­¤å„¿è¿›ç¨‹ï¼šçˆ¶äº²æ­»äº†ï¼Œæ”¿åºœæ•‘æµ
+// æ‰€è°“åƒµå°¸è¿›ç¨‹ï¼šå„¿å­æ­»äº†ï¼Œæœªå¾—å–„ç»ˆ
 
 namespace {
 
@@ -32,7 +32,7 @@ public:
 	std::shared_ptr<A> _aptr;
 };
 
-// ÓĞ»¥ÏàÒÀÀµ¹ØÏµÊ±Ê¹ÓÃÈõÖ¸Õë
+// æœ‰äº’ç›¸ä¾èµ–å…³ç³»æ—¶ä½¿ç”¨å¼±æŒ‡é’ˆ
 class CorrectB;
 class CorrectA {
 public:
@@ -68,7 +68,7 @@ DEF_test(bad_solution) {
 		B b;
 	}
 	
-	//Ñ­»·ÒıÓÃ
+	//å¾ªç¯å¼•ç”¨
 	DEF_case(its_not_ok) {
 		COUT << "its_not_ok";
 		std::shared_ptr<A> aptr = std::make_shared<A>();
@@ -85,7 +85,7 @@ DEF_test(correct_solution) {
 		CorrectB b;
 	}
 
-	// ´òÆÆÑ­»·ÒıÓÃ
+	// æ‰“ç ´å¾ªç¯å¼•ç”¨
 	DEF_case(its_also_ok) {
 		std::shared_ptr<CorrectA> aptr = std::make_shared<CorrectA>();
 		std::shared_ptr<CorrectB> bptr = std::make_shared<CorrectB>();
@@ -113,19 +113,19 @@ DEF_test(use_weak_ptr) {
 		EXPECT(nullptr != temp);
 		
 		aptr.reset();
-		EXPECT(nullptr != wp.lock());	// ÒòÎªtemp»¹ÔÚÓÃ
+		EXPECT(nullptr != wp.lock());	// å› ä¸ºtempè¿˜åœ¨ç”¨
 
-		temp = wp.lock();	//ÆäÊµ¾ÍÊÇ×Ô¼º¸³Öµ¸ø×Ô¼º
+		temp = wp.lock();	//å…¶å®å°±æ˜¯è‡ªå·±èµ‹å€¼ç»™è‡ªå·±
 		
-		EXPECT(1 == temp.use_count());	//ÒòÎª»¹ÊÇÖ»ÓĞtemp×Ô¼ºÔÚÊ¹ÓÃ
+		EXPECT(1 == temp.use_count());	//å› ä¸ºè¿˜æ˜¯åªæœ‰tempè‡ªå·±åœ¨ä½¿ç”¨
 
 		temp.reset();
 
-		EXPECT(nullptr == wp.lock());	// ÒòÎªÎ¨Ò»Ê¹ÓÃÕßtempÒÑ¾­²»ÔÙÓµÓĞÁË
+		EXPECT(nullptr == wp.lock());	// å› ä¸ºå”¯ä¸€ä½¿ç”¨è€…tempå·²ç»ä¸å†æ‹¥æœ‰äº†
 	}
 }
 
-// ÖÇÄÜÖ¸ÕëµÄÉ¾³ıÆ÷
+// æ™ºèƒ½æŒ‡é’ˆçš„åˆ é™¤å™¨
 template<typename T>
 static void shared_deleter(T *ptr) {
 	delete ptr;
@@ -141,7 +141,7 @@ static void unique_deleter(T *ptr) {
 }
 
 
-// ×Ô¶¨Òåshared_ptrµÄÉ¾³ıÆ÷
+// è‡ªå®šä¹‰shared_ptrçš„åˆ é™¤å™¨
 DEF_test(shared_deleter) {
 	std::shared_ptr<int> spi(new int(10), shared_deleter<int>);
 
@@ -149,7 +149,7 @@ DEF_test(shared_deleter) {
 	spi2 = std::make_shared<int>(20);
 }
 
-// unique_ptrÊÇÄ£°åº¯ÊıĞèÒªÉ¾³ıÆ÷(deleter)ÀàĞÍ, ÔÙ´«Èë¾ßÌåµÄÉ¾³ıÆ÷
+// unique_ptræ˜¯æ¨¡æ¿å‡½æ•°éœ€è¦åˆ é™¤å™¨(deleter)ç±»å‹, å†ä¼ å…¥å…·ä½“çš„åˆ é™¤å™¨
 DEF_test(unique_deleter) {
 	std::unique_ptr<int, decltype(unique_deleter<int>)*> upi(new int(20), unique_deleter<int>);
 }

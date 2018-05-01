@@ -8,9 +8,9 @@
 
 namespace test {
 
-// ÄÇÃ´c++11µÄstd::make_move_iterator½«ÅÉÉÏÓÃ³¡£¬Ëü¿ÉÒÔ½«Ò»¸öÆÕÍ¨µü´úÆ÷£¬Èçoldv.begin()£¬×ª»¯Îª"moveÊ½µü´úÆ÷"£¬
-// ÅäºÏstd::copy£¬½«ÀÏÈİÆ÷ÄÚÈ«²¿Êı¾İµÄÒıÓÃ£¬move¸øĞÂÈİÆ÷Í¬Ê±È¡ÏûÀÏÈİÆ÷¶ÔÊı¾İµÄ³ÖÓĞÈ¨¡£Õâ¾ÍÊÇc++11·ç¸ñµÄ¸ßËÙÊı
-// ¾İ¿½±´·½Ê½¡£
+// é‚£ä¹ˆc++11çš„std::make_move_iteratorå°†æ´¾ä¸Šç”¨åœºï¼Œå®ƒå¯ä»¥å°†ä¸€ä¸ªæ™®é€šè¿­ä»£å™¨ï¼Œå¦‚oldv.begin()ï¼Œè½¬åŒ–ä¸º"moveå¼è¿­ä»£å™¨"ï¼Œ
+// é…åˆstd::copyï¼Œå°†è€å®¹å™¨å†…å…¨éƒ¨æ•°æ®çš„å¼•ç”¨ï¼Œmoveç»™æ–°å®¹å™¨åŒæ—¶å–æ¶ˆè€å®¹å™¨å¯¹æ•°æ®çš„æŒæœ‰æƒã€‚è¿™å°±æ˜¯c++11é£æ ¼çš„é«˜é€Ÿæ•°
+// æ®æ‹·è´æ–¹å¼ã€‚
 DEF_test(make_move_iterator) {
 	std::vector<std::string> foo(3);
 	std::vector<std::string> bar{ "one","two","three" };
@@ -32,7 +32,7 @@ static std::vector<std::string> dst(1 << 25);
 DEF_test(make_move_iterator_performance) {	// -- 341ms
 	std::copy(std::make_move_iterator(src.begin()),
 		std::make_move_iterator(src.end()),
-		dst.begin());	// ×¢Òâ½ÓÊÕÊı¾İµÄÈİÆ÷±ØĞëÖÁÉÙÄÜ¹»ÈİÄÉÕâÃ´¶àÔªËØ£¬·ñÔòÓÃ½»»»
+		dst.begin());	// æ³¨æ„æ¥æ”¶æ•°æ®çš„å®¹å™¨å¿…é¡»è‡³å°‘èƒ½å¤Ÿå®¹çº³è¿™ä¹ˆå¤šå…ƒç´ ï¼Œå¦åˆ™ç”¨äº¤æ¢
 	src.clear();
 }
 
@@ -40,7 +40,7 @@ DEF_test(copy_performance) {	// -- 795ms
 	std::copy(src.begin(),src.end(),dst.begin());
 }
 
-DEF_test(swap_performance) {	// -- 0ms	ËÙ¶È×î¿ì
+DEF_test(swap_performance) {	// -- 0ms	é€Ÿåº¦æœ€å¿«
 	std::swap(src, dst);
 }
 

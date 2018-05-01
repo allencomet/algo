@@ -57,7 +57,7 @@ public:
 	}
 
 	//// arr initialize via copy-constructor
-	//DynArray &operator=(DynArray arr) {	//copy-and-swap ÎŞ·¨Çø·ÖÓÒÖµÒıÓÃ
+	//DynArray &operator=(DynArray arr) {	//copy-and-swap æ— æ³•åŒºåˆ†å³å€¼å¼•ç”¨
 	//	COUT << "copy assignment operator";
 	//	swap(*this, arr);
 	//	return *this;
@@ -124,7 +124,7 @@ public:
 	MyString(MyString&& str) {
 		std::cout << "Move Constructor is called! source: " << str._data << std::endl;
 		//_len = str._len;
-		//_data = str._data; //±ÜÃâÁË²»±ØÒªµÄ¿½±´
+		//_data = str._data; //é¿å…äº†ä¸å¿…è¦çš„æ‹·è´
 		//str._len = 0;
 		//str._data = NULL;
 		swap(*this, str);
@@ -137,7 +137,7 @@ public:
 		return *this;
 	}
 
-	//// copy-and-swap ±àÒëÆ÷ÔòÎŞ·¨Çø·ÖÓÒÖµÒıÓÃ
+	//// copy-and-swap ç¼–è¯‘å™¨åˆ™æ— æ³•åŒºåˆ†å³å€¼å¼•ç”¨
 	//MyString& operator=(MyString str) {
 	//	swap(*this, str);
 	//	std::cout << "Copy Assignment is called! source: " << str._data << std::endl;
@@ -147,27 +147,27 @@ public:
 	MyString& operator=(MyString&& str) {
 		std::cout << "Move Assignment is called! source: " << str._data << std::endl;
 		if (this != &str) {
-			if (nullptr != _data) delete[] _data;	//ÊÍ·ÅÔ­¿Õ¼ä
+			if (nullptr != _data) delete[] _data;	//é‡Šæ”¾åŸç©ºé—´
 			_len = str._len;
-			_data = str._data; //±ÜÃâÁË²»±ØÒªµÄ¿½±´
+			_data = str._data; //é¿å…äº†ä¸å¿…è¦çš„æ‹·è´
 			str._len = 0;
 			str._data = NULL;
 		}
-		//swap(*this, str);	//ÔÚÕâÀï²»ÄÜÓÃswap£¬±ØĞë±£³ÖÔ­¶ÔÏóÊ§Ğ§
+		//swap(*this, str);	//åœ¨è¿™é‡Œä¸èƒ½ç”¨swapï¼Œå¿…é¡»ä¿æŒåŸå¯¹è±¡å¤±æ•ˆ
 		return *this;
 	}
 
-	//»ñÈ¡³¤¶È
+	//è·å–é•¿åº¦
 	size_t size() const {
 		return _len;
 	}
 
-	//»ñÈ¡C×Ö·û´®
+	//è·å–Cå­—ç¬¦ä¸²
 	const char* c_str() const {
 		return _len != 0 ? _data : '\0';
 	}
 
-	//Êä³ö
+	//è¾“å‡º
 	friend std::ostream& operator<<(std::ostream &os, MyString &str) {
 		os << str._data;
 		return os;
@@ -264,7 +264,7 @@ void TestForward(T && v) {
 DEF_test(forward) {
 	//TestForward(1);	// lvalue rvalue rvalue
 
-	// ±»Ò»¸ö×óÖµ³õÊ¼»¯ºó±ä³ÉÁËÒ»¸ö×óÖµÒıÓÃ
+	// è¢«ä¸€ä¸ªå·¦å€¼åˆå§‹åŒ–åå˜æˆäº†ä¸€ä¸ªå·¦å€¼å¼•ç”¨
 	int x = 1;
 	//TestForward(x);	// lvalue lvalue rvalue
 

@@ -81,7 +81,7 @@ static void jeworker() {
 }
 
 DEF_test(test_multithread_jemalloc) {
-	//��ȡCPU�ĺ���
+	//获取CPU的核数
 	std::cout << "CPU: " << std::thread::hardware_concurrency() << std::endl;
 	using ThreadPtr = std::shared_ptr<std::thread>;
 	std::vector<ThreadPtr, mem::jemem::malloc_allocator<ThreadPtr>> v;
@@ -103,7 +103,7 @@ static void worker() {
 }
 
 DEF_test(test_multithread_stdmalloc) {
-	//��ȡCPU�ĺ���
+	//获取CPU的核数
 	std::cout << "CPU: " << std::thread::hardware_concurrency() << std::endl;
 	using ThreadPtr = std::shared_ptr<std::thread>;
 	std::vector<ThreadPtr> v;
@@ -124,67 +124,67 @@ DEF_test(test_multithread_stdmalloc) {
 /* 
 
 
-������ʹ��new����ʽ�������ÿ������캯��ʱʵ����ʱ�����ſռ�ķ���ġ���ôAllocator����ô�������أ�
-ʵ�������ǵ�����C++��һ�����õĲ�����:
+当我们使用new表达式，来调用拷贝构造函数时实际上时伴随着空间的分配的。那么Allocator是怎么做到的呢？
+实际上它是调用了C++的一个内置的操作符:
 
 void *operator new(size_t); // allocate an object
 void *operator new[](size_t); // allocate an array
 new (place_address) type
 new (place_address) type (initializer-list)
 
-��Щ���ز������������Խ����ڴ�ķ����Լ���ָ�����ڴ�ռ���ж���Ĺ��졣��Ҫע��������ǲ���new����ʽ��
-new����ʽ�ǲ����Ա����صģ�ʵ����new����ʽ�ײ�Ҳ���ǵ�������Щ���غ����ġ�ǰ�������ڴ�ķ��䣬��������
-���ڶ���Ĺ��졣Alloctor<T>���construct�����ײ�ʵ��ʵ���Ͼ���һ����ö��ѣ�
+这些重载操作符函数可以进行内存的分配以及在指定的内存空间进行对象的构造。需要注意的是它们并非new表达式，
+new表达式是不可以被重载的，实际上new表达式底层也就是调用了这些重载函数的。前两个用内存的分配，后两个则
+用于对象的构造。Alloctor<T>类的construct方法底层实现实际上就是一句调用而已：
 
 new (first_free) T(const T& t);
 
-����������һ��reallocate������ʵ�֣�
+我们再来看一下reallocate函数的实现：
 
 template <class T> 
 void Vector<T>::reallocate() {
 	// compute size of current array and allocate space for twice as many elements
-	std::ptrdiff_t size = first_free - elements;	// ���㵱ǰ�ڴ��С
-	std::ptrdiff_t newcapacity = 2 * max(size, 1);	// ������������Ĵ�СΪ��ǰ��С������
+	std::ptrdiff_t size = first_free - elements;	// 计算当前内存大小
+	std::ptrdiff_t newcapacity = 2 * max(size, 1);	// 计算重新申请的大小为当前大小的两倍
 
 	// allocate space to hold new capacity number of elements of type T
-	T* newelements = alloc.allocate(newcapacity);	// ��������������ǰ��С���ڴ�ռ�
+	T* newelements = alloc.allocate(newcapacity);	// 分配两倍两倍当前大小的内存空间
 
 	// construct copies of the existing elements in the new space
-	uninitialized_copy(elements, first_free, newelements);	// ��ԭ���ڴ���������ݸ�ֵ���µĵ�ַ�ռ�
+	uninitialized_copy(elements, first_free, newelements);	// 将原来内存区域的数据赋值到新的地址空间
 
 	// destroy the old elements in reverse order
 	for (T *p = first_free; p != elements;  empty  )
-		alloc.destroy(--p);	// ��ԭ���ڴ���������ݽ������������������ǽ��ڴ�黹����ϵͳ
+		alloc.destroy(--p);	// 对原来内存区域的数据进行析构操作，但不是将内存归还操作系统
 
 	// deallocate cannot be called on a 0 pointer  
 	if (elements){
 		// return the memory that held the elements
-		alloc.deallocate(elements, end - elements);		// ��ԭ�����ڴ�����ռ�黹������ϵͳ
+		alloc.deallocate(elements, end - elements);		// 将原来的内存区域空间归还给操作系统
 	}
 
 	// make our data structure point to the new elements  
-	elements = newelements;	// ���µ��ڴ��ַ���õ�elements
-	first_free = elements + size;	// ��һ�����õ�ַ
-	end = elements + newcapacity;	// ������ַ
+	elements = newelements;	// 将新的内存地址设置到elements
+	first_free = elements + size;	// 第一个可用地址
+	end = elements + newcapacity;	// 结束地址
 }
 
-Alloctor<T>���allocate��Ա������ʹ�ã�������������ϵͳ����ָ�������ĳ���Ϊsizeof(T)�������ռ䣬��ײ�ʵ���ǣ�
+Alloctor<T>类的allocate成员函数的使用，它的作用是向系统申请指定个数的长度为sizeof(T)的连续空间，其底层实现是：
 
 return operator new[](newcapacity * sizeof(T));
 
-����Alloctor<T>���deallocate��Ա�����ķ���������������������һ��ָ�����Ա����׵�ַ���ڶ�������ָ��Ҫ�ڴ����
-�Ķ���ĸ�����ע�⣬����ֻ�����ڴ���գ���������ж�������٣���ײ�ʹ�õ���delete���غ�����ͬnew���غ���һ����
-��Ҳ������������֪��delete����ʽ����delete����ʽ��ײ����ǵ�����delete���غ������ͷ��ڴ�ģ�������delete����Щ
-���غ�����
+关于Alloctor<T>类的deallocate成员函数的分析，它有两个参数，第一个指向线性表的首地址，第二个参数指明要内存回收
+的对象的个数，注意，这里只进行内存回收，而不会进行对象的销毁，其底层使用的是delete重载函数，同new重载函数一样，
+它也不是我们所熟知的delete表达式，而delete表达式其底层则是调用了delete重载函数来释放内存的，先来看delete有哪些
+重载函数：
 
 void *operator delete(void*); // free an object
 void *operator delete[](void*); // free an array
 
 
 
-���ʵ��һ���Լ���allocator
+如何实现一个自己的allocator
 
-����Allocator requirements������Ҫ�ṩһЩtypedefs��
+根据Allocator requirements我们需要提供一些typedefs：
 template <typename T>
 class CHxAllocator
 {
@@ -202,50 +202,50 @@ typedef ptrdiff_t           difference_type;
 template <typename _other> struct rebind { typedef CHxAllocator<_other> other; };
 };
 
-������һ���Ƚϲ�̫��������Ķ�����rebind��C++��׼����ô����rebind�ģ�
+这里有一个比较不太容易理解的东西：rebind。C++标准里这么描述rebind的：
 
 The member class template rebind in the table above is effectively a typedef template: 
 if the name Allocator is bound to SomeAllocator<T>, then
 
 Allocator::rebind<U>::other is the same type as SomeAllocator<U>.
 
-ɶ��˼��������һ���򵥵�������˵���£�
+啥意思？可以用一个简单的例子来说明下：
 
-ѧУ��ѧ�����ݽṹ���ȷ�˵ջ�������б����������Ǿ���ջ���б����Աȣ�������ʲô��һ���ĵط���
-Ʋ�����ݽṹ�ϵĲ��죬��allocator�ĽǶ����������ǿ��Է��֣���ջ�Ǵ���Ԫ�ر����ģ������б�ʵ��
-�ϲ���ֱ�Ӵ洢Ԫ�ر����ġ�Ҫά��һ���б����������ٻ���Ҫһ����ν��next��ָ�롣��ˣ���Ȼ��һ��
-����int���б�list<int>�������б��洢�Ķ��󲢲���int����������һ�����ݽṹ����������int���һ���
-��ָ��ǰ��Ԫ�ص�ָ�롣��ô��list<int, allocator<int>>���֪����������ڲ����ݽṹ�أ�
-�Ͼ�allocator<int>ֻ֪������int���͵Ŀռ䡣�����rebindҪ��������⡣
-ͨ��allocator<int>::rebind<_Node>()��Ϳ��Դ��������ڷ���_Node���Ϳռ�ķ������ˡ�
+学校都学过数据结构，比方说栈、单向列表、树。我们就拿栈和列表来对比，看看有什么大不一样的地方。
+撇开数据结构上的差异，从allocator的角度来看，我们可以发现：堆栈是存贮元素本身的，但是列表实际
+上不是直接存储元素本身的。要维护一个列表，我们至少还需要一个所谓的next的指针。因此，虽然是一个
+保存int的列表list<int>，但是列表存储的对象并不是int本身，而是一个数据结构，它保存了int并且还包
+含指向前后元素的指针。那么，list<int, allocator<int>>如何知道分配这个内部数据结构呢？
+毕竟allocator<int>只知道分配int类型的空间。这就是rebind要解决的问题。
+通过allocator<int>::rebind<_Node>()你就可以创建出用于分配_Node类型空间的分配器了。
 
-������Ҫ�ṩ�����Ľӿڡ�����The default allocator������������Ҫ�ṩ����һЩ�ӿڣ�
+接下来要提供其他的接口。根据The default allocator的描述，我们要提供如下一些接口：
 
-����val�ĵ�ַ
+返回val的地址
 pointer address(reference val) constconst_pointer address(const_reference val) const	
 
-����ռ䡣����malloc��pHint�������ӣ���Ҫ�Ǹ����ʹ�ã�����������ܡ�
+分配空间。类似malloc。pHint可以无视，主要是给类库使用，用于提高性能。
 pointer allocate(size_type cnt, CHxAllocator<void>::const_pointer pHint = 0)	
 
-�ͷſռ䣬����free��
+释放空间，类似free。
 void deallocate(pointer p, size_type n)	
 
-�ɷ�������������
+可分配的最大数量。
 size_type max_size() const throw()	
 
-�ڵ�ַp��ָ��Ŀռ䣬ʹ��val������䡣��Ҫʹ�õ�palcement new���Ա㱣֤���õ����캯����
+在地址p所指向的空间，使用val进行填充。需要使用到palcement new，以便保证调用到构造函数。
 void construct(pointer p, const_reference val)	
 
-����pָ����ڴ�������ݡ�һ��ͨ����ʾ��������������ִ�С�
+析构p指向的内存块中内容。一般通过显示调研析构函数来执行。
 void destroy(pointer p)	
 
-���ֹ��캯������������
+各种构造函数和析构函数
 allocator() throw ()
 allocator(const_reference) throw ()
 template <typename _other> allocator(CHxAllocator <_other> const&) throw()
 ~CHxAllocator() throw()
 
-���ʵ��������Щ��������ֻҪ�ճ���׼���е�ʵ�־Ϳ����ˡ��������Ҫ��c��malloc��free��ʵ�֣�Ҳ������ôд��
+如何实现上面这些函数，你只要照抄标准库中的实现就可以了。如果你想要用c的malloc和free来实现，也可以这么写：
 
 pointer allocate(size_type cnt, CHxAllocator<void>::const_pointer pHint = 0)
 {
@@ -274,12 +274,12 @@ void destroy(pointer p){
 	p->~T();
 }
 
-�����ϣ����Ǿͼ�ʵ����һ���Լ���allocator�����⣬������Щ����Ҫ�Ľӿں������㻹��Ҫʵ�ֱȽϲ�����==��!=��
-������Щ�����ݱ�׼�ĵ�����ֱ�ӷ���true��false��
+基本上，我们就简单实现了一个自己的allocator。另外，除了这些最主要的接口函数，你还需要实现比较操作符==和!=，
+但是这些函根据标准文档，都直接返回true和false。
 
-��дallocator����ҪĿ����Ϊ��������ܡ�������������������أ�ֱ��ʹ��Windows��HeapXXXX���ڴ�API��
-��ʵ�����Լ���һ�¾ͻᷢ�֣����������������ԡ���Ϊͨ��new����ͨ��malloc�����ͨ��HeapAlloc����ֱ�ӵ���HeapAlloc�༸�仰��
-���ʵ��һ�������ܵ�allocator����Ҫ����memory pool���뷨�����⣬��ݵ�stlԴ�������������SGI STL���������뷨ʵ�ֵ�һ��alloc
+重写allocator的主要目的是为了提高性能。那怎样才能提高性能呢？直接使用Windows的HeapXXXX堆内存API？
+其实，你自己用一下就会发现，性能提升并不明显。因为通过new，再通过malloc，最后通过HeapAlloc不比直接调用HeapAlloc多几句话。
+如何实现一个高性能的allocator，需要借助memory pool的想法。另外，侯捷的stl源码剖析里分析了SGI STL利用类似想法实现的一个alloc
 
 
 #ifndef _CGH_ALLOC
@@ -297,7 +297,7 @@ template<class T>
 inline T* _allocate(ptrdiff_t size, T*)
 {
 set_new_handler(0);
-T* tmp = (T*)(::operator new((size_t)(size * sizeof(T)))); // size���������Ԫ������sizeof(T)ÿ��Ԫ�صĴ�С
+T* tmp = (T*)(::operator new((size_t)(size * sizeof(T)))); // size：待分配的元素量，sizeof(T)每个元素的大小
 if (tmp == 0)
 {
 cerr << "out of memory" << endl;
@@ -315,7 +315,7 @@ inline void _deallocate(T* buffer)
 template<class T1, class  T2>
 inline void _construct(T1* p, const T2& value)
 {
-new(p)T1(value); // ����placement new����ָ�����ڴ�λ��p����ʼ��T1���󣬳�ʼ��T1����ʱ����T1�ĸ��ƹ��캯��
+new(p)T1(value); // 调用placement new，在指定的内存位置p处初始化T1对象，初始化T1对象时调用T1的复制构造函数
 }
 
 template<class T>

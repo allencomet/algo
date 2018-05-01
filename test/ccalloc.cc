@@ -42,25 +42,25 @@ public:
 
 	/** Put an element on the top of the stack */
 	void push(T element) {
-		Node* newNode = allocator_.allocate(1);	// ·ÖÅäÒ»¸ö½ÚµãÄÚ´æ¿Õ¼ä
-		allocator_.construct(newNode, Node());	// ¹¹ÔìÕâ¸ö½ÚµãÊı¾İ
-		newNode->data = element;	// ÉèÖÃ¸Ã½ÚµãÊı¾İ
-		newNode->prev = head_;	// ÉèÖÃÇ°Ïò½Úµã
-		head_ = newNode;	// ½«Í·½áµãÒÆÖÁµ±Ç°ĞÂÔö½Úµã
+		Node* newNode = allocator_.allocate(1);	// åˆ†é…ä¸€ä¸ªèŠ‚ç‚¹å†…å­˜ç©ºé—´
+		allocator_.construct(newNode, Node());	// æ„é€ è¿™ä¸ªèŠ‚ç‚¹æ•°æ®
+		newNode->data = element;	// è®¾ç½®è¯¥èŠ‚ç‚¹æ•°æ®
+		newNode->prev = head_;	// è®¾ç½®å‰å‘èŠ‚ç‚¹
+		head_ = newNode;	// å°†å¤´ç»“ç‚¹ç§»è‡³å½“å‰æ–°å¢èŠ‚ç‚¹
 	}
 
 	/** Remove and return the topmost element on the stack */
 	T pop() {
-		T result = head_->data;		// Í·²¿½ÚµãÊı¾İ
-		Node* tmp = head_->prev;	// ±£´æÇ°Ïò½ÚµãÖ¸Õë
-		allocator_.destroy(head_);	// µ÷ÓÃÎö¹¹º¯Êı
-		allocator_.deallocate(head_, 1);	// ¹é»¹ÄÚ´æ¿Õ¼ä
-		head_ = tmp;	// ½«µ±Ç°½ÚµãÍË»Øµ½Ç°Ò»¸ö½Úµã
-		return result;	// ·µ»ØÏú»Ù½ÚµãÊı¾İ
+		T result = head_->data;		// å¤´éƒ¨èŠ‚ç‚¹æ•°æ®
+		Node* tmp = head_->prev;	// ä¿å­˜å‰å‘èŠ‚ç‚¹æŒ‡é’ˆ
+		allocator_.destroy(head_);	// è°ƒç”¨ææ„å‡½æ•°
+		allocator_.deallocate(head_, 1);	// å½’è¿˜å†…å­˜ç©ºé—´
+		head_ = tmp;	// å°†å½“å‰èŠ‚ç‚¹é€€å›åˆ°å‰ä¸€ä¸ªèŠ‚ç‚¹
+		return result;	// è¿”å›é”€æ¯èŠ‚ç‚¹æ•°æ®
 	}
 
 	/** Return the topmost element */
-	T top() { return (head_->data); }	// »ñÈ¡Õ»¶¥ÔªËØÊı¾İ
+	T top() { return (head_->data); }	// è·å–æ ˆé¡¶å…ƒç´ æ•°æ®
 
 private:
 	allocator allocator_;
@@ -177,7 +177,7 @@ DEF_test(test_ccalloc) {
 	COUT << "mem_allocator costs time: " << t.ms();
 }
 
-// ÏÂÃæÕâÖÖ»á±ÀÀ£,²»ÄÜÓÃÓÚ¸´ÔÓµÄÊı¾İ½á¹¹
+// ä¸‹é¢è¿™ç§ä¼šå´©æºƒ,ä¸èƒ½ç”¨äºå¤æ‚çš„æ•°æ®ç»“æ„
 DEF_test(test_vector_mempool) {
 	try{
 		std::vector<std::string, ccalloc::MemoryPool<std::string> > stackPool;
