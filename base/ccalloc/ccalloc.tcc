@@ -32,7 +32,7 @@ const noexcept
 }
 
 
-
+// 默认构造函数
 template <typename T, size_t BlockSize>
 MemoryPool<T, BlockSize>::MemoryPool()
 noexcept
@@ -44,7 +44,7 @@ noexcept
 }
 
 
-
+// 拷贝构造函数
 template <typename T, size_t BlockSize>
 MemoryPool<T, BlockSize>::MemoryPool(const MemoryPool& memoryPool)
 noexcept :
@@ -52,19 +52,19 @@ MemoryPool()
 {}
 
 
-
+// 移动构造函数
 template <typename T, size_t BlockSize>
 MemoryPool<T, BlockSize>::MemoryPool(MemoryPool&& memoryPool)
 noexcept
 {
-  currentBlock_ = memoryPool.currentBlock_;
+  currentBlock_ = memoryPool.currentBlock_; // 移交所有权
   memoryPool.currentBlock_ = nullptr;
   currentSlot_ = memoryPool.currentSlot_;
   lastSlot_ = memoryPool.lastSlot_;
   freeSlots_ = memoryPool.freeSlots;
 }
 
-
+// 不同类型的构造函数
 template <typename T, size_t BlockSize>
 template<class U>
 MemoryPool<T, BlockSize>::MemoryPool(const MemoryPool<U>& memoryPool)
@@ -73,7 +73,7 @@ MemoryPool()
 {}
 
 
-
+// 重载移动赋值操作符
 template <typename T, size_t BlockSize>
 MemoryPool<T, BlockSize>&
 MemoryPool<T, BlockSize>::operator=(MemoryPool&& memoryPool)
@@ -81,7 +81,7 @@ noexcept
 {
   if (this != &memoryPool)
   {
-    std::swap(currentBlock_, memoryPool.currentBlock_);
+    std::swap(currentBlock_, memoryPool.currentBlock_);	// 交换内存块
     currentSlot_ = memoryPool.currentSlot_;
     lastSlot_ = memoryPool.lastSlot_;
     freeSlots_ = memoryPool.freeSlots;
@@ -90,7 +90,7 @@ noexcept
 }
 
 
-
+// 析构函数
 template <typename T, size_t BlockSize>
 MemoryPool<T, BlockSize>::~MemoryPool()
 noexcept
@@ -124,17 +124,18 @@ const noexcept
 }
 
 
-
+// 分配内存块
 template <typename T, size_t BlockSize>
-void
-MemoryPool<T, BlockSize>::allocateBlock()
-{
+void MemoryPool<T, BlockSize>::allocateBlock(){
   // Allocate space for the new block and store a pointer to the previous one
+  // 分配一个新的内存区块，并指向前一个内存区块
   data_pointer_ newBlock = reinterpret_cast<data_pointer_>
                            (operator new(BlockSize));
   reinterpret_cast<slot_pointer_>(newBlock)->next = currentBlock_;
   currentBlock_ = reinterpret_cast<slot_pointer_>(newBlock);
+
   // Pad block body to staisfy the alignment requirements for elements
+  // 填补整个区块来满足元素内存区域的对齐要求
   data_pointer_ body = newBlock + sizeof(slot_pointer_);
   size_type bodyPadding = padPointer(body, alignof(slot_type_));
   currentSlot_ = reinterpret_cast<slot_pointer_>(body + bodyPadding);
@@ -146,14 +147,14 @@ MemoryPool<T, BlockSize>::allocateBlock()
 
 template <typename T, size_t BlockSize>
 inline typename MemoryPool<T, BlockSize>::pointer
-MemoryPool<T, BlockSize>::allocate(size_type n, const_pointer hint)
-{
+MemoryPool<T, BlockSize>::allocate(size_type n, const_pointer hint){
+  // // 如果有空闲的对象槽，那么直接将空闲区域交付出去
   if (freeSlots_ != nullptr) {
     pointer result = reinterpret_cast<pointer>(freeSlots_);
     freeSlots_ = freeSlots_->next;
     return result;
-  }
-  else {
+  } else {
+	// 如果对象槽不够用了，则分配一个新的内存区块
     if (currentSlot_ >= lastSlot_)
       allocateBlock();
     return reinterpret_cast<pointer>(currentSlot_++);

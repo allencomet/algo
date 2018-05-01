@@ -18,11 +18,31 @@ DEF_test(mem_std_allocator) {
 }
 
 DEF_test(mem_own_allocator) {
-	std::vector<std::string, mem::stdmem::malloc_allocator<std::string>> v(1 << 25,"allen");
+	size_t sz = 1 << 25;
+	std::vector<std::string, mem::stdmem::malloc_allocator<std::string>> v;
+	for (size_t i=0; i<sz/2;++i){
+		v.push_back("allen");
+		v.push_back("allen");
+	}
+	for (size_t i=0;i<sz/2;++i){
+		v.pop_back();
+		v.pop_back();
+	}
+	EXPECT_EQ(0, v.size());
 }
 
 DEF_test(jemem_allocator) {
-	std::vector<std::string, mem::jemem::malloc_allocator<std::string>> v(1 << 25,"allen");
+	size_t sz = 1 << 25;
+	std::vector<std::string, mem::jemem::malloc_allocator<std::string>> v;
+	for (size_t i = 0; i < sz / 2; ++i) {
+		v.push_back("allen");
+		v.push_back("allen");
+	}
+	for (size_t i = 0; i < sz / 2; ++i) {
+		v.pop_back();
+		v.pop_back();
+	}
+	EXPECT_EQ(0, v.size());
 }
 
 DEF_test(jemalloc) {

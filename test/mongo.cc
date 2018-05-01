@@ -1336,13 +1336,13 @@ DEF_test(mongo_mt) {
 	anony::ev_build.wait();
 	COUT << "创建查询请求完毕，准备回收BUILD线程...";
 
-	th_build.join();
+	th_build.join();// 由主线程去回收子线程的资源
 	COUT << "回收BUILD线程完毕...";
 
 
 	COUT << "查询请求处理完毕，准备回收QUERY线程...";
 	for (int i = 0; i < threads.size(); ++i) {
-		threads[i]->join();
+		threads[i]->force_join();// 由于子线程不会自动退出，所以强制退出子线程
 	}
 	COUT << "回收QUERY线程完毕...";
 

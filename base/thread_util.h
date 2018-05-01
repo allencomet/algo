@@ -300,19 +300,23 @@ namespace safe{
 
 		~Thread() {}
 
-		bool start() {
+		inline bool start() {
 			if (atomic_compare_swap(&_tid, 0, 1) != 0) return true;
 			return pthread_create(&_tid, NULL, &Thread::thread_fun, &_fun) == 0;
 		}
 
-		void join() {
+		inline void force_join() {
 			pthread_t id = atomic_swap(&_tid, 0);
-			//if (id != 0) pthread_join(id, NULL);
 			if (id > 0 && (0 == pthread_kill(id, 0))) {
 				pthread_cancel(id);
 				pthread_join(id, NULL);
 				id = 0;
 			}
+		}
+
+		inline void join() {
+			pthread_t id = atomic_swap(&_tid, 0);
+			if (id != 0) pthread_join(id, NULL);
 		}
 
 		void detach() {
