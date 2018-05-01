@@ -25,6 +25,7 @@
 #include <climits>
 #include <cstddef>
 
+// 只能用于简单数据的内存分配，类似于boost::pool
 namespace ccalloc {
 
 template <typename T, size_t BlockSize = 4096>

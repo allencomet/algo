@@ -33,7 +33,7 @@ algo_source_files = glob('algo/impl/*.cc')
 db_source_files = glob('db/mongodb/*.cc') + \
 			glob('db/redis/*.cc')
 
-test_source_files = glob('test/*.cc') + glob('test/cpp0x/*.cc')
+test_source_files = glob('test/*.cc') + glob('test/cpp0x/*.cc')+ glob('test/boost/*.cc')
 
 exe_source_files = ['main.cc'] + common_source_files + algo_source_files + db_source_files + test_source_files
 

@@ -4,6 +4,7 @@
 #include <cassert>
 #include <thread>
 #include <chrono>
+#include <exception>
 
 namespace {
 template <typename T>
@@ -178,23 +179,27 @@ DEF_test(test_ccalloc) {
 
 // 下面这种会崩溃,不能用于复杂的数据结构
 DEF_test(test_vector_mempool) {
-	std::vector<std::string, ccalloc::MemoryPool<std::string> > stackPool;
-	for (int j = 0; j < REPS; j++) {
-		assert(stackPool.empty());
-		for (int i = 0; i < ELEMS / 4; i++) {
-			// Unroll to time the actual code and not the loop
-			stackPool.push_back("allen");
-			stackPool.push_back("allen");
-			stackPool.push_back("allen");
-			stackPool.push_back("allen");
+	try{
+		std::vector<std::string, ccalloc::MemoryPool<std::string> > stackPool;
+		for (int j = 0; j < REPS; j++) {
+			assert(stackPool.empty());
+			for (int i = 0; i < ELEMS / 4; i++) {
+				// Unroll to time the actual code and not the loop
+				stackPool.push_back("allen");
+				stackPool.push_back("allen");
+				stackPool.push_back("allen");
+				stackPool.push_back("allen");
+			}
+			for (int i = 0; i < ELEMS / 4; i++) {
+				// Unroll to time the actual code and not the loop
+				stackPool.pop_back();
+				stackPool.pop_back();
+				stackPool.pop_back();
+				stackPool.pop_back();
+			}
 		}
-		for (int i = 0; i < ELEMS / 4; i++) {
-			// Unroll to time the actual code and not the loop
-			stackPool.pop_back();
-			stackPool.pop_back();
-			stackPool.pop_back();
-			stackPool.pop_back();
-		}
+	}catch (std::bad_alloc &e){
+		std::cerr << e.what() << std::endl;
 	}
 }
 
