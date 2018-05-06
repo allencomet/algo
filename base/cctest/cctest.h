@@ -149,7 +149,12 @@ struct TestSaver {
 #define DEF_case(_case_) _current_case = #_case_;
 
 inline void set_green() {
-    std::cout << "\033[0;32m"; \
+    std::cout << "\033[0;32m";
+    std::cout.flush();
+}
+
+inline void set_lgreen() {
+    std::cout << "\e[1;32m";
     std::cout.flush();
 }
 
@@ -158,8 +163,98 @@ inline void set_red() {
     std::cout.flush();
 }
 
+inline void set_lred() {
+    std::cout << "\e[1;31m";
+    std::cout.flush();
+}
+
+inline void set_black() {
+    std::cout << "\e[0;30m";
+    std::cout.flush();
+}
+
+inline void set_lblack() {
+    std::cout << "\e[1;30m";
+    std::cout.flush();
+}
+
 inline void set_lightblue() {
     std::cout << "\033[1;34m";
+    std::cout.flush();
+}
+
+inline void set_brown() {
+    std::cout << "\e[0;33m";
+    std::cout.flush();
+}
+
+inline void set_yellow() {
+    std::cout << "\e[1;33m";
+    std::cout.flush();
+}
+
+inline void set_purple() {
+    std::cout << "\e[0;35m";
+    std::cout.flush();
+}
+
+inline void set_lpurple() {
+    std::cout << "\e[1;35m";
+    std::cout.flush();
+}
+
+inline void set_cyan() {
+    std::cout << "\e[0;36m";
+    std::cout.flush();
+}
+
+inline void set_lcyan() {
+    std::cout << "\e[1;36m";
+    std::cout.flush();
+}
+
+inline void set_gray() {
+    std::cout << "\e[0;37m";
+    std::cout.flush();
+}
+
+inline void set_white() {
+    std::cout << "\e[1;37m";
+    std::cout.flush();
+}
+
+inline void set_bold() {
+    std::cout << "\e[1m";
+    std::cout.flush();
+}
+
+inline void set_underline() {
+    std::cout << "\e[4m";
+    std::cout.flush();
+}
+
+inline void set_blink() {
+    std::cout << "\e[5m";
+    std::cout.flush();
+}
+
+inline void set_reverse() {
+    std::cout << "\e[7m";
+    std::cout.flush();
+}
+
+inline void set_hide() {
+    std::cout << "\e[8m";
+    std::cout.flush();
+}
+
+inline void set_clear() {
+    std::cout << "\e[2J";
+    std::cout.flush();
+}
+
+inline void set_clrline() {
+    std::cout << "\r\e[K";
     std::cout.flush();
 }
 
@@ -167,6 +262,8 @@ inline void reset_color() {
     std::cout << "\033[0m";
     std::cout.flush();
 }
+
+
 
 #define EXPECT(_cond_) \
     if (_cond_) {\

@@ -68,17 +68,23 @@ void list_addressbook(const tutorial::AddressBook &w_address_book) {
 class Describer{
 	public:
 		explicit Describer(const std::string &info):_info(info){
-			set_green();
+			set_yellow();
 			std::cout << ">>> begin [" << _info << "]" << std::endl;
 			reset_color();
+			_t.restart();
 		}
 
 		~Describer(){
-			set_green();
-			std::cout << "<<< [" << _info << "] done" << std::endl;
+			set_yellow();
+			std::cout << "<<< [" << _info << "] done: ";
+			reset_color();
+			set_purple();
+			set_blink();
+			std::cout << _t.ms() << "ms" << std::endl;
 			reset_color();
 		}
 	private:
+		sys::timer _t;
 		std::string _info;
 		DISALLOW_COPY_AND_ASSIGN(Describer);
 };
