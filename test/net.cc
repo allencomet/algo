@@ -39,7 +39,7 @@ DEF_test(net_util) {
 
 safe::SyncEvent ev;
 
-void start_tcp_server() {
+static void start_tcp_server() {
     int fd = net::tcp_socket();
     CHECK_GE(fd, 0) << "create tcp socket failed..";
 
@@ -78,7 +78,7 @@ void start_tcp_server() {
     }
 }
 
-void start_tcp_client() {
+static void start_tcp_client() {
     sys::msleep(500);
 
     int fd = net::tcp_socket();
