@@ -11,7 +11,7 @@ else:
 ccdefines = {'_FILE_OFFSET_BITS' : '64', 'DEBUG' : 1, 'JEMALLOC_NO_DEMANGLE': 1,}
 
 env = Environment(CC = 'gcc', 
-	LIBS = ['stdc++', 'm', 'pthread', 'dl', 'rt', 'jemalloc', 'mongoc-1.0', 'bson-1.0'], 
+	LIBS = ['stdc++', 'm', 'pthread', 'dl', 'rt', 'jemalloc', 'protobuf', 'mongoc-1.0', 'bson-1.0'], 
 	LIBPATH = ['/usr/lib', '/usr/local/lib', './lib'], 
 	LINKFLAGS = ['-Wl,--no-as-needed','-rdynamic'],
 	CPPPATH = ['.','/usr/local/include','/usr/local/include/libbson-1.0','/usr/local/include/libmongoc-1.0'])
@@ -33,7 +33,10 @@ algo_source_files = glob('algo/impl/*.cc')
 db_source_files = glob('db/mongodb/*.cc') + \
 			glob('db/redis/*.cc')
 
-test_source_files = glob('test/*.cc') + glob('test/cpp0x/*.cc')+ glob('test/boost/*.cc')
+test_source_files = glob('test/*.cc') + \
+				glob('test/cpp0x/*.cc') + \
+				glob('test/boost/*.cc') + \
+				glob('test/protobuf/*.cc')
 
 exe_source_files = ['main.cc'] + common_source_files + algo_source_files + db_source_files + test_source_files
 

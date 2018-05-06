@@ -25,7 +25,7 @@ CXXDEFINES = -DDEBUG=1 -D_FILE_OFFSET_BITS=64 -DJEMALLOC_NO_DEMANGLE=1
 CXXFLAGS = -std=c++0x -g2 -O2 -Werror -Wno-deprecated
 
 #链接器参数
-LDFLAGS = -lstdc++ -lm -lpthread -ldl -lrt -ljemalloc -lmongoc-1.0 -lbson-1.0
+LDFLAGS = -lstdc++ -lm -lpthread -ldl -lrt -ljemalloc -lprotobuf -lmongoc-1.0 -lbson-1.0
 
 #列出依赖的所有头文件
 DEPS = $(shell find ./ -name "*.h")

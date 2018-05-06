@@ -1,0 +1,40 @@
+syntax = "proto3";  //proto3版本
+package tutorial;   //避免名字冲突
+
+//消息结构
+message Person {
+  string name = 1;   //默认为可选字段[singular,对应proto2中的optional]
+  int32 id = 2;      //默认为可选字段[singular,对应proto2中的optional]
+  string email = 3;  //默认为可选字段[singular,对应proto2中的optional]
+
+  //枚举，必须是大于0的数值，并且用分号隔开
+  enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+  }
+
+  //嵌套消息
+  message PhoneNumber {
+    string number = 1; //默认为可选字段[singular,对应proto2中的optional]
+    PhoneType type = 2;//默认为可选字段[singular,对应proto2中的optional]
+  }
+
+  repeated PhoneNumber phones = 4;//可重复字段，类似数组
+}
+
+//消息结构
+message AddressBook {
+  repeated Person people = 1;//可重复字段，类似数组
+}
+
+//(1)在第一行非空白非注释行，必须写：syntax = "proto3";
+//(2)字段规则移除了 “required”，并把 “optional” 改名为 “singular”
+//(3)“repeated”字段默认采用 packed 编码
+//(4)移除了 default 选项
+//(5)枚举类型的第一个字段必须为 0
+//(6)移除了对分组的支持，分组的功能完全可以用消息嵌套的方式来实现，并且更清晰
+//(7)移除了对扩展的支持，新增了 Any 类型(Any 类型是用来替代 proto2 中的扩展的)
+//(8)增加了 JSON 映射特性
+//(9)旧代码在解析新增字段时，会把不认识的字段丢弃，再序列化后新增的字段就没了
+//(10)语言增加 Go、Ruby、JavaNano 支持

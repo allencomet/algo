@@ -26,6 +26,7 @@ AUX_SOURCE_DIRECTORY(./base/cctest BASE_TEST_DIR_SRCS)
 AUX_SOURCE_DIRECTORY(./test TEST_DIR_SRCS)
 AUX_SOURCE_DIRECTORY(./test/cpp0x TEST_C11_DIR_SRCS)
 AUX_SOURCE_DIRECTORY(./test/boost TEST_BOOST_DIR_SRCS)
+AUX_SOURCE_DIRECTORY(./test/protobuf TEST_PROTOBUF_DIR_SRCS)
 AUX_SOURCE_DIRECTORY(./algo/impl ALGO_IMPL_DIR_SRCS)
 AUX_SOURCE_DIRECTORY(./design DESIGN_DIR_SRCS)
 AUX_SOURCE_DIRECTORY(./db/mongodb DB_MONGO_DIR_SRCS)
@@ -61,6 +62,7 @@ ADD_EXECUTABLE(exe  ${DIR_SRCS}
                     ${TEST_DIR_SRCS}
 					${TEST_C11_DIR_SRCS}
 					${TEST_BOOST_DIR_SRCS}
+					${TEST_PROTOBUF_DIR_SRCS}
 					${ALGO_IMPL_DIR_SRCS}
                     ${DESIGN_DIR_SRCS}
                     ${DB_MONGO_DIR_SRCS}
@@ -70,4 +72,4 @@ ADD_EXECUTABLE(exe  ${DIR_SRCS}
                     )
 
 # TARGET_LINK_LIBRARIES 指明可执行文件 exe 依赖的链接库
-TARGET_LINK_LIBRARIES(exe stdc++ m pthread dl rt jemalloc mongoc-1.0 bson-1.0)
+TARGET_LINK_LIBRARIES(exe stdc++ m pthread dl rt jemalloc protobuf mongoc-1.0 bson-1.0)
