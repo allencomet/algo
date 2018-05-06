@@ -65,7 +65,27 @@ void list_addressbook(const tutorial::AddressBook &w_address_book) {
 	}//end-for
 }
 
+class Describer{
+	public:
+		explicit Describer(const std::string &info):_info(info){
+			set_green();
+			std::cout << ">>> begin [" << _info << "]" << std::endl;
+			reset_color();
+		}
+
+		~Describer(){
+			set_green();
+			std::cout << "<<< [" << _info << "] done" << std::endl;
+			reset_color();
+		}
+	private:
+		std::string _info;
+		DISALLOW_COPY_AND_ASSIGN(Describer);
+};
+
 }
+
+#define DESCRIBER(str) Describer(str)
 
 namespace test {
 
@@ -75,31 +95,35 @@ DEF_test(test_protobuf) {
 	GOOGLE_PROTOBUF_VERIFY_VERSION;
 
 	tutorial::AddressBook w_address_book;
-
-	COUT << "Start >>>>>>>>>>>>>>>>>>>>> 设置消息";
-	setting_addressbook(w_address_book);
-	setting_addressbook(w_address_book);
-	COUT << "Done >>>>>>>>>>>>>>>>>>>>>\n";
-
-	COUT << "Start >>>>>>>>>>>>>>>>>>>>> 查看消息:";
-	list_addressbook(w_address_book);
-	COUT << "Done >>>>>>>>>>>>>>>>>>>>>\n";
-
-	COUT << "Start >>>>>>>>>>>>>>>>>>>>> 序列化";
-	std::string data;
-	w_address_book.SerializeToString(&data);//序列化
-	COUT << "Done >>>>>>>>>>>>>>>>>>>>>\n";
-
-
-	COUT << "Start >>>>>>>>>>>>>>>>>>>>> 反序列化";
 	tutorial::AddressBook r_address_book;
-	r_address_book.ParseFromString(data);//反序列化
-	COUT << "Done >>>>>>>>>>>>>>>>>>>>>\n";
+	std::string data;
 
-	COUT << "Start >>>>>>>>>>>>>>>>>>>>> 反序列化后数据如下：";
-	list_addressbook(r_address_book);
-	COUT << "Done >>>>>>>>>>>>>>>>>>>>>\n";
+	DEF_case(setting_addressbook){
+		DESCRIBER("设置消息");
+		setting_addressbook(w_address_book);
+		setting_addressbook(w_address_book);
+	}
+	
+	DEF_case(check_addressbook){
+		DESCRIBER("查看消息");
+		list_addressbook(w_address_book);
+	}
 
+	DEF_case(SerializeToString){
+		DESCRIBER("序列化");
+		w_address_book.SerializeToString(&data);//序列化
+	}
+
+	DEF_case(ParseFromString){
+		DESCRIBER("反序列化");
+		r_address_book.ParseFromString(data);//反序列化
+	}
+
+	DEF_case(DebugString){
+		DESCRIBER("查看反序列化后数据");
+		COUT << r_address_book.DebugString();
+	}
+	
 	//Optional:  Delete all global objects allocated by libprotobuf.
 	google::protobuf::ShutdownProtobufLibrary();
 }
@@ -139,7 +163,7 @@ static void start_tcp_server() {
 			CERR << "server read: " << r << " bytes, from client: "
 				<< cli_addr.to_string();
 
-			data = buf;
+			data.assign(buf,r);//确保数据不会被截断
 			tutorial::AddressBook r_address_book;
 			r_address_book.ParseFromString(data);//反序列化
 			list_addressbook(r_address_book);

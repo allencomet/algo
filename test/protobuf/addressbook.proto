@@ -38,3 +38,32 @@ message AddressBook {
 //(8)增加了 JSON 映射特性
 //(9)旧代码在解析新增字段时，会把不认识的字段丢弃，再序列化后新增的字段就没了
 //(10)语言增加 Go、Ruby、JavaNano 支持
+
+/*
+1、标准方法
+
+bool IsInitialized() const:               确认required字段是否被设置
+string DebugString() const:               返回消息的可读表示，用于调试
+void CopyFrom(const SameObject& from):    使用给定消息值copy
+void Clear():                             清除所有元素为空状态
+
+ 
+2、解析与序列化
+
+//C数组的序列化和序列化API
+bool ParseFromArray(const void* data, int size);
+bool SerializeToArray(void* data, int size) const;
+
+//C++string序列化和序列化API（注意字节是二进制，而非文本）
+bool SerializeToString(string* output) const;  
+bool ParseFromString(const string& data);  
+
+//文件描述符的序列化和序列化API  
+bool SerializeToFileDescriptor(int file_descriptor) const;  
+bool ParseFromFileDescriptor(int file_descriptor);  
+
+//C++ stream 序列化/反序列化API  
+bool SerializeToOstream(ostream* output) const:
+bool ParseFromIstream(istream* input):
+
+*/
