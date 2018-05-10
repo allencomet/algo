@@ -353,4 +353,6 @@ inline bool daemon() {
 
 void init_daemon();
 
+bool run_single_instance();
+
 } // namespace os

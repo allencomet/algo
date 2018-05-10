@@ -160,35 +160,35 @@ std::string file::read(uint32 size) {
 }
 
 void init_daemon() {
-	// 1������һЩ�����ն˲������ź�  
+	// 1）屏蔽一些控制终端操作的信号  
 	signal(SIGTTOU, SIG_IGN);
 	signal(SIGTTIN, SIG_IGN);
 	signal(SIGTSTP, SIG_IGN);
 	signal(SIGHUP, SIG_IGN);
 
-	// 2���ں�̨����  
+	// 2）在后台运行  
 	pid_t pid;
-	if (pid = fork()) { // ������  
-		exit(0); //���������̣��ӽ��̼���  
-	} else if (pid< 0) { // ����  
+	if (pid = fork()) { // 父进程  
+		exit(0); //结束父进程，子进程继续  
+	} else if (pid< 0) { // 出错  
 		perror("fork");
 		exit(EXIT_FAILURE);
 	}
 
-	// 3����������նˡ���¼�Ự�ͽ�����  
+	// 3）脱离控制终端、登录会话和进程组  
 	setsid();
 
-	// 4����ֹ�������´򿪿����ն�  
-	if (pid = fork()) { // ������  
-		exit(0);      // ������һ�ӽ��̣��ڶ��ӽ��̼������ڶ��ӽ��̲����ǻỰ�鳤��   
-	} else if (pid< 0) { // ����  
+	// 4）禁止进程重新打开控制终端  
+	if (pid = fork()) { // 父进程  
+		exit(0);      // 结束第一子进程，第二子进程继续（第二子进程不再是会话组长）   
+	} else if (pid< 0) { // 出错  
 		perror("fork");
 		exit(EXIT_FAILURE);
 	}
 
-	/* 5���رմ򿪵��ļ�������  
-	 NOFILE Ϊ <sys/param.h> �ĺ궨��  
-	 NOFILE Ϊ�ļ�����������������ͬϵͳ�в�ͬ����  */
+	/* 5）关闭打开的文件描述符  
+	 NOFILE 为 <sys/param.h> 的宏定义  
+	 NOFILE 为文件描述符最大个数，不同系统有不同限制  */
 	for (int i = 0; i< NOFILE; ++i) {
 		close(i);
 	}
@@ -199,14 +199,60 @@ void init_daemon() {
 		dup(0);
 	}*/
 
-	// 6���ı䵱ǰ����Ŀ¼  
+	// 6）改变当前工作目录  
 	chdir("/tmp");
 
-	// 7�������ļ�������ģ  
+	// 7）重设文件创建掩模  
 	umask(0);
 
-	// 8������ SIGCHLD �ź�  
+	// 8）处理 SIGCHLD 信号  
 	signal(SIGCHLD, SIG_IGN);
+}
+
+bool run_single_instance(){
+	// 获取当前可执行文件名
+    std::string process_name = get_process_name();
+    if (process_name.empty()) return false;
+
+    // 打开或创建一个文件
+    std::string file_path = std::string("/var/run/") + process_name + ".pid";
+    int fd = open(file_path.c_str(), O_RDWR | O_CREAT, 0666);
+    if (fd < 0){
+		ELOG << "Open file failed: error[" << strerror(errno) << "]";
+        return false;
+    }
+
+    // 将该文件锁定
+    // 锁定后的文件将不能够再次锁定
+    struct flock fl;
+    fl.l_type = F_WRLCK; // 写文件锁定
+    fl.l_start = 0;
+    fl.l_whence = SEEK_SET;
+    fl.l_len = 0;
+    int ret = fcntl(fd, F_SETLK, &fl);
+    if (ret < 0){
+        if (errno == EACCES || errno == EAGAIN){
+			WLOG << file_path << " already locked: error[" << strerror(errno) << "]";
+            close(fd);
+            return false;
+        }
+    }
+
+    // 锁定文件后，将该进程的pid写入文件
+    char buf[16] = {'\0'};
+    sprintf(buf, "%d", getpid());
+    ftruncate(fd, 0);
+    ret = write(fd, buf, strlen(buf));
+    if (ret < 0){
+		WLOG << "Write file failed: file[" << file_path << "],error[" << strerror(errno) << "]";
+        close(fd);
+        exit(1);
+    }
+
+    // 函数返回时不需要调用close(fd)
+    // 不然文件锁将失效
+    // 程序退出后kernel会自动close
+    return true;
 }
 
 } // namespace os

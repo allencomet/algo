@@ -53,13 +53,6 @@ namespace safe {
 		DISALLOW_COPY_AND_ASSIGN(ShareMem);
 	};
 
-
-	/*union semun {
-		int32 val;
-		struct semid_ds *buf;
-		unsigned short *arry;
-	};*/
-
 	class SemMutex {
 	public:
 		SemMutex() {}
@@ -156,4 +149,5 @@ namespace safe {
 
 		DISALLOW_COPY_AND_ASSIGN(SemLockGuard);
 	};
-}
+	
+}//safe
