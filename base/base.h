@@ -2,6 +2,7 @@
 #include "ccflag/ccflag.h"
 #include "cclog/cclog.h"
 #include "cctest/cctest.h"
+#include "cctimer/cctimer.h"
 
 
 #include "ascii.h"

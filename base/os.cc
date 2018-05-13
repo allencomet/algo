@@ -212,7 +212,7 @@ void init_daemon() {
 bool run_single_instance(){
 	// 获取当前可执行文件名
     std::string process_name = get_process_name();
-    if (process_name.empty()) return false;
+    if (process_name.empty()) exit(1);
 
     // 打开或创建一个文件
     std::string file_path = std::string("/var/run/") + process_name + ".pid";

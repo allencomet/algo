@@ -11,8 +11,8 @@ public:
     void build(TYPE polynomial, TYPE init_remainder, TYPE final_xor_value);
     /**
      * Compute the CRC checksum of a binary message block.
-     * @para message, ÓÃÀ´¼ÆËãµÄÊı¾İ
-     * @para nBytes, Êı¾İµÄ³¤¶È
+     * @para message, ç”¨æ¥è®¡ç®—çš„æ•°æ®
+     * @para nBytes, æ•°æ®çš„é•¿åº¦
      */
     TYPE crcCompute(char * message, unsigned int nBytes);
     TYPE crcCompute(char * message, unsigned int nBytes, bool reinit);

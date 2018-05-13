@@ -24,18 +24,38 @@ const std::vector<std::string>& args() {
 
 void Tests::run_tests() {
     if (FLG_a) {//run all tests if true
+        set_lgreen();
+        std::cout << "there are " << _tests.size() << " tests run..." << std::endl;
+        reset_color();
         for (uint32 i = 0; i < _tests.size(); ++i) {
             _runner.run_test(_tests[i]);
         }
-
     } else {//default run the tests if on
+        set_lgreen();
+        std::cout << "there are " << _tests.size() << " tests in this program..." << std::endl;
+        reset_color();
+        std::vector<int32> v;
         for (uint32 i = 0; i < _tests.size(); ++i) {
             if (_tests[i]->on()) {
                 _runner.run_test(_tests[i]);
             } else {
-                delete _tests[i];
-                _tests[i] = NULL;
+                set_lcyan();
+                std::cout << "test [";
+                set_lpurple();
+                std::cout << _tests[i]->name(); 
+                reset_color();
+                set_lcyan();
+                std::cout << "] not enable in this program..." << std::endl;
+                reset_color();
+                v.push_back(i);
+                //delete _tests[i];
+                //_tests[i] = NULL;
             }
+        }
+        for(std::vector<int32>::iterator it = v.begin();
+            it != v.end(); ++it){
+            delete _tests[*it];
+            _tests[*it] = NULL;
         }
     }
 }

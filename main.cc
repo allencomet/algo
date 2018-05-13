@@ -78,7 +78,7 @@ int main(int argc,char **argv){
 	//os::init_daemon();
 	//os::daemon();
 
-    if(!os::run_single_instance()) return 1;
+    if(!os::run_single_instance()) return 0;
 
 	ccflag::init_ccflag(argc, argv);
 	cclog::init_cclog(argv[0]);

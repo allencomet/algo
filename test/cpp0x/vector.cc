@@ -26,7 +26,7 @@ void FillVector(std::vector<BigTestStruct>& testVector) {
 
 namespace test {
 
-//#1 ÌáÇ°·ÖÅä×ã¹»µÄ¿Õ¼äÒÔ±ÜÃâ²»±ØÒªµÄÖØĞÂ·ÖÅäºÍ¸´ÖÆÖÜÆÚ
+//#1 æå‰åˆ†é…è¶³å¤Ÿçš„ç©ºé—´ä»¥é¿å…ä¸å¿…è¦çš„é‡æ–°åˆ†é…å’Œå¤åˆ¶å‘¨æœŸ
 DEF_test(vector_test01) {
 	std::vector<BigTestStruct> testVector1;
 	std::vector<BigTestStruct> testVector2;
@@ -39,7 +39,7 @@ DEF_test(vector_test01) {
 	std::cout << "Time to Fill Vector With Reservation:" << t.us() << std::endl;
 }
 
-//#2 Ê¹ÓÃ shrink_to_fit() ÊÍ·Å vector Õ¼ÓÃµÄÄÚ´æ£¬ ¨C clear() »ò erase() ²»»áÊÍ·ÅÄÚ´æ¡£
+//#2 ä½¿ç”¨ shrink_to_fit() é‡Šæ”¾ vector å ç”¨çš„å†…å­˜ï¼Œ â€“ clear() æˆ– erase() ä¸ä¼šé‡Šæ”¾å†…å­˜ã€‚
 DEF_test(vector_test02) {
 	using namespace std;
 	std::vector<BigTestStruct> testVector1;
@@ -61,8 +61,8 @@ DEF_test(vector_test02) {
 	cout << "Capacity After shrinking the Vector:" << capacity << endl;
 }
 
-//#3 ÔÚÌî³ä»òÕß¿½±´µ½ vector µÄÊ±ºò£¬Ó¦¸ÃÊ¹ÓÃ¸³Öµ¶ø²»ÊÇ insert() »òpush_back().
-// ¸³Öµ·Ç³£ÓĞĞ§ÂÊ£¬ÒòÎªËüÖªµÀÒª¿½±´µÄ vector ÓĞ¶à´ó£¬È»ºóÖ»ĞèÒªÍ¨¹ıÄÚ´æ¹ÜÀíÒ»´ÎĞÔ¿½±´ vector ÄÚ²¿µÄ»º´æ
+//#3 åœ¨å¡«å……æˆ–è€…æ‹·è´åˆ° vector çš„æ—¶å€™ï¼Œåº”è¯¥ä½¿ç”¨èµ‹å€¼è€Œä¸æ˜¯ insert() æˆ–push_back().
+// èµ‹å€¼éå¸¸æœ‰æ•ˆç‡ï¼Œå› ä¸ºå®ƒçŸ¥é“è¦æ‹·è´çš„ vector æœ‰å¤šå¤§ï¼Œç„¶ååªéœ€è¦é€šè¿‡å†…å­˜ç®¡ç†ä¸€æ¬¡æ€§æ‹·è´ vector å†…éƒ¨çš„ç¼“å­˜
 DEF_test(vector_test03) {
 	using namespace std;
 	vector<BigTestStruct> sourceVector, destinationVector;
@@ -83,10 +83,10 @@ DEF_test(vector_test03) {
 	cout << "Using insert() :" << t.us() << endl;
 }
 
-//#4 ±éÀú std::vector ÔªËØµÄÊ±ºò£¬±ÜÃâÊ¹ÓÃ std::vector::at() º¯Êı¡£
+//#4 éå† std::vector å…ƒç´ çš„æ—¶å€™ï¼Œé¿å…ä½¿ç”¨ std::vector::at() å‡½æ•°ã€‚
 
-//#5 ¾¡Á¿±ÜÃâÔÚ vector Ç°²¿²åÈëÔªËØ
+//#5 å°½é‡é¿å…åœ¨ vector å‰éƒ¨æ’å…¥å…ƒç´ 
 
-//#6 ÔÚÏò vector ²åÈëÔªËØµÄÊ±ºòÊ¹ÓÃ emplace_back() ¶ø²»ÊÇ push_back()¡£
+//#6 åœ¨å‘ vector æ’å…¥å…ƒç´ çš„æ—¶å€™ä½¿ç”¨ emplace_back() è€Œä¸æ˜¯ push_back()ã€‚
 
 }//namespace test
