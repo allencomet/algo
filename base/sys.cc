@@ -17,6 +17,35 @@ std::string local_time::to_string(int64 sec, const char* format) {
     return s;
 }
 
+int32 to_week(int32 year,int32 month,int32 day) {
+    int w;    //星期
+	int c;    //世纪-1 YYYY的头两位
+	int y;    //年份   YYYY的后两位
+	int m;    //月份 >=3 1月 2月看成上年的13月 14月
+	int d=day;    //日
+	if(month>=3) {
+		c=year / 100;
+		y=year % 100;
+		m=month;
+	} else {
+		m=month+12;
+		y=(year-1) % 100;
+		c=(year-1) / 100;
+	}
+	w=y+y/4+c/4-2*c+(26*(m+1))/10+d-1;
+	w=(w+700) %7;
+	return w;
+}
+
+bool date_time::is_weekend(int year,int month,int day) {
+    int nWeekDay = date_time::to_week(year,month,day);
+	if(6 == nWeekDay || 7 == nWeekDay){
+		return true;
+	}else{
+		return false;
+	}
+}
+
 //注册信号回调
 bool signal::set_handler(int sig, handler_t handler, int flag) {
     struct sigaction sa;

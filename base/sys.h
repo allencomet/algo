@@ -108,6 +108,124 @@ struct local_time {
     }
 };
 
+int32 to_week(int32 year,int32 month,int32 day);
+
+class date {
+public:
+    date(int32 year,int32 month,int32 day){
+        _tm.tm_year = year - 1900;
+        _tm.tm_mon = month - 1;
+        _tm.tm_mday = day;
+        _tm.tm_min = 0;
+        _tm.tm_hour = 0;
+        _tm.tm_wday = to_week(year, month, day);
+        _tm.tm_wday = _tm.tm_wday == 7 ? 0 : _tm.tm_wday;
+        _tm.tm_yday = cal_day(year, month, day);//一年中第几天
+    }
+
+    ~date(){}
+
+    inline void to_tm(struct tm *info){
+        *info = _tm;
+    }
+
+    inline int32 tm_year() {
+        return _tm.tm_year;
+    }
+
+    inline int32 tm_mon() {
+        return _tm.tm_mon;
+    }
+
+    inline int32 tm_mday() {
+        return _tm.tm_mday;
+    }
+
+    inline int32 tm_yday() {
+        return _tm.tm_yday;
+    }
+
+    inline int32 tm_wday() {
+        return _tm.tm_wday;
+    }
+
+private:
+    inline int32 cal_day(int32 year,int32 month,int32 day) {
+        int a[13]={0,31,28,31,30,31,30,31,31,30,31,30,31};
+        int sum = 0;
+
+        if( ( year%4 == 0 && year%100 ) || year%400 == 0 ) a[2]=29;
+        for(int i=0; i<=month-1; i++) sum += a[i];
+        return sum+day;
+    }
+
+    struct tm _tm;
+};
+
+class date_time {
+public:
+    static inline int32 week() {
+        return date_time::timeinfo()->tm_wday;
+    }
+
+    static inline int32 week_r() {
+        struct tm now_time;
+        date_time::timeinfo_r(&now_time);
+        return now_time.tm_wday;
+    }
+
+    static inline int32 day() {
+        return date_time::timeinfo()->tm_mday;
+    }
+
+    static inline int32 day_r() {
+        struct tm now_time;
+        date_time::timeinfo_r(&now_time);
+        return now_time.tm_mday;
+    }
+
+    static inline int32 month() {
+        return date_time::timeinfo()->tm_mon + 1;
+    }
+
+    static inline int32 month_r() {
+        struct tm now_time;
+        date_time::timeinfo_r(&now_time);
+        return now_time.tm_mon + 1;
+    }
+
+    static inline int32 year() {
+        return date_time::timeinfo()->tm_year + 1900;
+    }
+
+    static inline int32 year_r() {
+        struct tm now_time;
+        date_time::timeinfo_r(&now_time);
+        return now_time.tm_year + 1900;
+    }
+
+    static int32 to_week(int32 year,int32 month,int32 day) {
+        return to_week(year, month, day);
+    }
+    static bool is_weekend(int year,int month,int day);
+private:
+    static struct tm *timeinfo() {
+        time_t t;
+        struct tm * ti;
+        ::time(&t);
+        ti = ::localtime(&t);
+        return ti;
+    }
+
+    static struct tm *timeinfo_r(struct tm *ret) {
+        time_t t;
+        struct tm * ti;
+        ::time(&t);
+        ti = ::localtime_r(&t, ret);
+        return ti;
+    }
+};
+
 /*
  * write to or read from system clipboard, **xclip** required.
  */
@@ -244,6 +362,7 @@ inline void signal::del_handler(int sig) {
 
 extern xx::utc utc;
 extern xx::local_time local_time;
+extern xx::date_time date_time;
 extern xx::clipboard clipboard;
 extern xx::signal signal;
 
